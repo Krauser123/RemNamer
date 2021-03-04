@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using MaterialSkin;
 using MaterialSkin.Controls;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using remNamer.Class;
 
 namespace remNamer
@@ -30,6 +31,10 @@ namespace remNamer
             cmdDialog.CheckFileExists = false;
             cmdDialog.CheckPathExists = true;
             cmdDialog.FileName = "Folder Selection";
+
+            //dgv not works well with dark mode
+            dgvFileInfo.ForeColor = Color.Black;
+            dgvPatterns.ForeColor = Color.Black;
         }
 
         private void LoadFilesToDataGrid()
@@ -41,8 +46,17 @@ namespace remNamer
 
                 try
                 {
-                    var files = Directory.GetFiles(txtOriginDirectory.Text);
+                    var files = Directory.GetFiles(txtOriginDirectory.Text).ToList();
 
+                    if (chkSearchFilesRecursively.Checked)
+                    {
+                        var dir = Directory.GetDirectories(txtOriginDirectory.Text);
+
+                        foreach (var subDir in dir)
+                        {
+                            files.AddRange(Directory.GetFiles(txtOriginDirectory.Text));
+                        }
+                    }
                     foreach (var item in files)
                     {
                         fileList.Add(new FileToRename(item));
@@ -130,14 +144,16 @@ namespace remNamer
 
         private void SwitchViewMode_CheckedChanged(object sender, EventArgs e)
         {
-            if (materialSkinManager.Theme == MaterialSkinManager.Themes.DARK)
-            {
-                materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
-            }
-            else
+            var switchView = (MaterialSwitch)sender;
+            
+            if (switchView.Checked)
             {
                 materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
             }
+            else
+            {
+                materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;                
+            }            
         }
 
         private void DgvPatterns_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -156,6 +172,11 @@ namespace remNamer
 
         private void BtnPreview_Click(object sender, EventArgs e)
         {
+            ApplyChanges();
+        }
+
+        private void ApplyChanges()
+        {
             if (txtToSearch.Text != string.Empty)
             {
                 foreach (var item in fileList)
@@ -168,6 +189,9 @@ namespace remNamer
 
         private void BtnRename_Click(object sender, EventArgs e)
         {
+            //Be sure that collections are updated
+            ApplyChanges();
+
             //Block form
             this.Enabled = false;
 
