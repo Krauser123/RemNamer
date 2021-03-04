@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using MaterialSkin;
 using MaterialSkin.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using remNamer.Class;
 
 namespace remNamer
 {
     public partial class FrmMain : MaterialForm
     {
-        const int LENGTH_CRITERIA = 3;
-
         private CommonOpenFileDialog cmdDialog = new CommonOpenFileDialog();
         private BindingSource bindingSource = new BindingSource();
         private List<FileToRename> fileList = new List<FileToRename>();
         private MaterialSkinManager materialSkinManager;
+        private PatternFinder patternFinder = new PatternFinder();
 
         public FrmMain()
         {
@@ -43,7 +42,7 @@ namespace remNamer
                         fileList.Add(new FileToRename(item));
                     }
 
-                    LoadDataBinding_Files();
+                    LoadDataBinding_Files(chkSearchPatterns.Checked);
                 }
                 catch (DirectoryNotFoundException e)
                 {
@@ -52,7 +51,7 @@ namespace remNamer
             }
         }
 
-        private void LoadDataBinding_Files()
+        private void LoadDataBinding_Files(bool searchPatterns)
         {
             bindingSource.DataSource = fileList;
             dgvFileInfo.DataSource = bindingSource;
@@ -61,9 +60,13 @@ namespace remNamer
             dgvFileInfo.AllowUserToResizeRows = true;
 
             //Resize columns in DataGridView
-            FitDataGridColumns();
+            FitDataGridColumns(ref dgvFileInfo);
 
-            SearchPatterns();
+            if (searchPatterns)
+            {
+                var dict = patternFinder.SearchPatterns(fileList);
+                LoadDataBinding_Patterns(dict);
+            }
         }
 
         private void LoadDataBinding_Patterns(Dictionary<string, int> dict)
@@ -72,93 +75,30 @@ namespace remNamer
             bindingSourcePattern.DataSource = dict;
             dgvPatterns.DataSource = bindingSourcePattern;
 
-            dgvPatterns.AllowUserToResizeColumns = false;
-            dgvPatterns.AllowUserToResizeRows = false;
+            dgvPatterns.AllowUserToResizeColumns = true;
+            dgvPatterns.AllowUserToResizeRows = true;
+
+            dgvPatterns.Columns[0].HeaderText = "Word";
+            dgvPatterns.Columns[1].Visible = false;
+
+            dgvPatterns.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
-        private void FitDataGridColumns()
+        private void FitDataGridColumns(ref DataGridView dgv)
         {
             //Initialize counter
             int totalWidth = 0;
 
             //Auto Resize the columns to fit the data
-            foreach (DataGridViewColumn column in dgvFileInfo.Columns)
+            foreach (DataGridViewColumn column in dgv.Columns)
             {
-                dgvFileInfo.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-                int widthCol = dgvFileInfo.Columns[column.Index].Width;
+                dgv.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+                int widthCol = dgv.Columns[column.Index].Width;
 
-                dgvFileInfo.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-                dgvFileInfo.Columns[column.Index].Width = widthCol;
+                dgv.Columns[column.Index].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                dgv.Columns[column.Index].Width = widthCol;
                 totalWidth += widthCol;
             }
-        }
-
-        private void SearchPatterns()
-        {
-            if (fileList != null)
-            {
-                var exampleItems = GetRandomExampleItems();
-
-                var namesWithoutExt = exampleItems.Select(o => o.NameWithoutExtension).ToList();
-                var joinedNames = String.Join(" ", namesWithoutExt);
-
-                var patterns = countPatterns(joinedNames);
-
-                LoadDataBinding_Patterns(patterns);
-            }
-
-        }
-
-        private Dictionary<string, int> countPatterns(string text)
-        {
-            Dictionary<string, int> dict = new Dictionary<string, int>();
-
-            //Just cleaning up a bit
-            text = text.Replace(",", "");
-            //sInput = sInput.Replace(".", ""); //Just cleaning up a bit
-
-            //Create an array of words
-            string[] arr = text.Split(' ');
-
-            foreach (string word in arr)
-            {
-                if (word.Length >= LENGTH_CRITERIA)
-                {
-                    if (dict.ContainsKey(word))
-                    {
-                        dict[word] = dict[word] + 1; //Increment the count
-                    }
-                    else
-                    {
-                        dict[word] = 1; //put it in the dictionary with a count 1
-                    }
-                }
-            }
-
-            //Remove matches equals to 1
-            var itemsToRemove = dict.Where(o => o.Value == 1).ToList();
-            foreach (var item in itemsToRemove)
-            {
-                dict.Remove(item.Key);
-            }
-
-            return dict;
-        }
-
-        private List<FileToRename> GetRandomExampleItems()
-        {
-            int numberOfItemsToPick = Convert.ToInt32(fileList.Count / 8);
-
-            //Pick X random items
-            Random rnd = new Random();
-            var temp = new List<FileToRename>();
-            for (int i = 0; i < numberOfItemsToPick; i++)
-            {
-                temp.Add(fileList[rnd.Next(0, fileList.Count)]);
-            }
-
-
-            return temp;
         }
 
         private void BtnOpenFolder_Click(object sender, EventArgs e)
@@ -176,7 +116,7 @@ namespace remNamer
             }
         }
 
-        private void switchViewMode_CheckedChanged(object sender, EventArgs e)
+        private void SwitchViewMode_CheckedChanged(object sender, EventArgs e)
         {
             if (materialSkinManager.Theme == MaterialSkinManager.Themes.DARK)
             {
@@ -186,6 +126,24 @@ namespace remNamer
             {
                 materialSkinManager.Theme = MaterialSkinManager.Themes.DARK;
             }
+        }
+
+        private void DgvPatterns_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex != -1 && dgvPatterns.CurrentCell != null && dgvPatterns.CurrentCell.Value != null)
+            {
+                txtToSearch.AppendText(dgvPatterns.CurrentRow.Cells[0].Value.ToString());
+            }
+        }
+
+        private void BtnPreview_Click(object sender, EventArgs e)
+        {
+            foreach (var item in fileList)
+            {
+                item.NameAfterChanges = item.Name.Replace(txtToSearch.Text, txtReplace.Text);
+            }
+
+            LoadDataBinding_Files(false);
         }
     }
 }
