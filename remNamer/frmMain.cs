@@ -33,6 +33,9 @@ namespace remNamer
         {
             if (txtOriginDirectory.Text != string.Empty)
             {
+                //Clean list from previous executions
+                fileList = new List<FileToRename>();
+
                 try
                 {
                     var files = Directory.GetFiles(txtOriginDirectory.Text);
@@ -103,6 +106,12 @@ namespace remNamer
 
         private void BtnOpenFolder_Click(object sender, EventArgs e)
         {
+            //User can set the directory directly
+            if (!String.IsNullOrEmpty(txtOriginDirectory.Text))
+            {
+                cmdDialog.InitialDirectory = txtOriginDirectory.Text;
+            }
+            
             if (cmdDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 if (cmdDialog.FileName.StartsWith(Environment.GetEnvironmentVariable("windir")))
@@ -132,18 +141,44 @@ namespace remNamer
         {
             if (e.RowIndex != -1 && dgvPatterns.CurrentCell != null && dgvPatterns.CurrentCell.Value != null)
             {
-                txtToSearch.AppendText(dgvPatterns.CurrentRow.Cells[0].Value.ToString());
+                string preSpace = "";
+                if (txtToSearch.Text == "")
+                {
+                    preSpace = " ";
+                }
+
+                txtToSearch.AppendText(preSpace + dgvPatterns.CurrentRow.Cells[0].Value.ToString());
             }
         }
 
         private void BtnPreview_Click(object sender, EventArgs e)
         {
-            foreach (var item in fileList)
+            if (txtToSearch.Text != string.Empty)
             {
-                item.NameAfterChanges = item.Name.Replace(txtToSearch.Text, txtReplace.Text);
+                foreach (var item in fileList)
+                {
+                    item.NameAfterChanges = item.Name.Replace(txtToSearch.Text, txtReplace.Text);
+                }
+            }
+            LoadDataBinding_Files(false);
+        }
+
+        private void BtnRename_Click(object sender, EventArgs e)
+        {
+            //Block form
+            this.Enabled = false;
+
+            //Change files
+            foreach (var item in this.fileList)
+            {
+                item.RenameFile();
             }
 
-            LoadDataBinding_Files(false);
+            //Reload files
+            LoadFilesToDataGrid();
+
+            //Unblock form
+            this.Enabled = true;
         }
     }
 }

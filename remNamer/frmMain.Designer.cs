@@ -57,13 +57,13 @@ namespace remNamer
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvFileInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvFileInfo.Location = new System.Drawing.Point(4, 464);
-            this.dgvFileInfo.Margin = new System.Windows.Forms.Padding(2);
+            this.dgvFileInfo.Location = new System.Drawing.Point(5, 571);
+            this.dgvFileInfo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dgvFileInfo.Name = "dgvFileInfo";
             this.dgvFileInfo.ReadOnly = true;
             this.dgvFileInfo.RowHeadersWidth = 51;
             this.dgvFileInfo.RowTemplate.Height = 24;
-            this.dgvFileInfo.Size = new System.Drawing.Size(892, 232);
+            this.dgvFileInfo.Size = new System.Drawing.Size(1189, 286);
             this.dgvFileInfo.TabIndex = 2;
             // 
             // dgvPatterns
@@ -71,13 +71,13 @@ namespace remNamer
             this.dgvPatterns.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvPatterns.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvPatterns.Location = new System.Drawing.Point(4, 189);
-            this.dgvPatterns.Margin = new System.Windows.Forms.Padding(2);
+            this.dgvPatterns.Location = new System.Drawing.Point(5, 233);
+            this.dgvPatterns.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dgvPatterns.Name = "dgvPatterns";
             this.dgvPatterns.RowHeadersWidth = 51;
             this.dgvPatterns.RowTemplate.Height = 24;
             this.dgvPatterns.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvPatterns.Size = new System.Drawing.Size(214, 258);
+            this.dgvPatterns.Size = new System.Drawing.Size(285, 318);
             this.dgvPatterns.TabIndex = 5;
             this.dgvPatterns.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DgvPatterns_CellClick);
             // 
@@ -90,11 +90,11 @@ namespace remNamer
             this.btnOpenFolder.DrawShadows = true;
             this.btnOpenFolder.HighEmphasis = true;
             this.btnOpenFolder.Icon = null;
-            this.btnOpenFolder.Location = new System.Drawing.Point(613, 105);
-            this.btnOpenFolder.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.btnOpenFolder.Location = new System.Drawing.Point(817, 129);
+            this.btnOpenFolder.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.btnOpenFolder.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnOpenFolder.Name = "btnOpenFolder";
-            this.btnOpenFolder.Size = new System.Drawing.Size(145, 50);
+            this.btnOpenFolder.Size = new System.Drawing.Size(193, 50);
             this.btnOpenFolder.TabIndex = 9;
             this.btnOpenFolder.Text = "Open folder";
             this.btnOpenFolder.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
@@ -109,7 +109,7 @@ namespace remNamer
             this.chkSearchPatterns.Checked = true;
             this.chkSearchPatterns.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkSearchPatterns.Depth = 0;
-            this.chkSearchPatterns.Location = new System.Drawing.Point(252, 70);
+            this.chkSearchPatterns.Location = new System.Drawing.Point(385, 86);
             this.chkSearchPatterns.Margin = new System.Windows.Forms.Padding(0);
             this.chkSearchPatterns.MouseLocation = new System.Drawing.Point(-1, -1);
             this.chkSearchPatterns.MouseState = MaterialSkin.MouseState.HOVER;
@@ -125,7 +125,7 @@ namespace remNamer
             this.chkSearchFilesRecursively.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkSearchFilesRecursively.AutoSize = true;
             this.chkSearchFilesRecursively.Depth = 0;
-            this.chkSearchFilesRecursively.Location = new System.Drawing.Point(409, 70);
+            this.chkSearchFilesRecursively.Location = new System.Drawing.Point(611, 86);
             this.chkSearchFilesRecursively.Margin = new System.Windows.Forms.Padding(0);
             this.chkSearchFilesRecursively.MouseLocation = new System.Drawing.Point(-1, -1);
             this.chkSearchFilesRecursively.MouseState = MaterialSkin.MouseState.HOVER;
@@ -142,15 +142,14 @@ namespace remNamer
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOriginDirectory.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtOriginDirectory.Depth = 0;
-            this.txtOriginDirectory.Enabled = false;
-            this.txtOriginDirectory.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.txtOriginDirectory.Location = new System.Drawing.Point(7, 105);
-            this.txtOriginDirectory.Margin = new System.Windows.Forms.Padding(2);
+            this.txtOriginDirectory.Font = new System.Drawing.Font("Roboto", 12F);
+            this.txtOriginDirectory.Location = new System.Drawing.Point(9, 129);
+            this.txtOriginDirectory.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtOriginDirectory.MaxLength = 50;
             this.txtOriginDirectory.MouseState = MaterialSkin.MouseState.OUT;
             this.txtOriginDirectory.Multiline = false;
             this.txtOriginDirectory.Name = "txtOriginDirectory";
-            this.txtOriginDirectory.Size = new System.Drawing.Size(599, 50);
+            this.txtOriginDirectory.Size = new System.Drawing.Size(799, 50);
             this.txtOriginDirectory.TabIndex = 12;
             this.txtOriginDirectory.Text = "";
             // 
@@ -159,8 +158,7 @@ namespace remNamer
             this.lblOriginDirectory.AutoSize = true;
             this.lblOriginDirectory.Depth = 0;
             this.lblOriginDirectory.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.lblOriginDirectory.Location = new System.Drawing.Point(4, 79);
-            this.lblOriginDirectory.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblOriginDirectory.Location = new System.Drawing.Point(5, 97);
             this.lblOriginDirectory.MouseState = MaterialSkin.MouseState.HOVER;
             this.lblOriginDirectory.Name = "lblOriginDirectory";
             this.lblOriginDirectory.Size = new System.Drawing.Size(110, 19);
@@ -172,8 +170,7 @@ namespace remNamer
             this.lblPattern.AutoSize = true;
             this.lblPattern.Depth = 0;
             this.lblPattern.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.lblPattern.Location = new System.Drawing.Point(2, 168);
-            this.lblPattern.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPattern.Location = new System.Drawing.Point(3, 207);
             this.lblPattern.MouseState = MaterialSkin.MouseState.HOVER;
             this.lblPattern.Name = "lblPattern";
             this.lblPattern.Size = new System.Drawing.Size(106, 19);
@@ -189,23 +186,24 @@ namespace remNamer
             this.btnRename.DrawShadows = true;
             this.btnRename.HighEmphasis = true;
             this.btnRename.Icon = null;
-            this.btnRename.Location = new System.Drawing.Point(613, 418);
-            this.btnRename.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.btnRename.Location = new System.Drawing.Point(817, 514);
+            this.btnRename.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.btnRename.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnRename.Name = "btnRename";
-            this.btnRename.Size = new System.Drawing.Size(282, 43);
+            this.btnRename.Size = new System.Drawing.Size(376, 53);
             this.btnRename.TabIndex = 15;
             this.btnRename.Text = "Rename";
             this.btnRename.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
             this.btnRename.UseAccentColor = false;
             this.btnRename.UseVisualStyleBackColor = true;
+            this.btnRename.Click += new System.EventHandler(this.BtnRename_Click);
             // 
             // switchViewMode
             // 
             this.switchViewMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.switchViewMode.AutoSize = true;
             this.switchViewMode.Depth = 0;
-            this.switchViewMode.Location = new System.Drawing.Point(752, 64);
+            this.switchViewMode.Location = new System.Drawing.Point(1048, 79);
             this.switchViewMode.Margin = new System.Windows.Forms.Padding(0);
             this.switchViewMode.MouseLocation = new System.Drawing.Point(-1, -1);
             this.switchViewMode.MouseState = MaterialSkin.MouseState.HOVER;
@@ -223,12 +221,13 @@ namespace remNamer
             this.txtToSearch.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtToSearch.Depth = 0;
             this.txtToSearch.Font = new System.Drawing.Font("Roboto", 12F);
-            this.txtToSearch.Location = new System.Drawing.Point(232, 211);
+            this.txtToSearch.Location = new System.Drawing.Point(309, 260);
+            this.txtToSearch.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtToSearch.MaxLength = 50;
             this.txtToSearch.MouseState = MaterialSkin.MouseState.OUT;
             this.txtToSearch.Multiline = false;
             this.txtToSearch.Name = "txtToSearch";
-            this.txtToSearch.Size = new System.Drawing.Size(374, 50);
+            this.txtToSearch.Size = new System.Drawing.Size(499, 50);
             this.txtToSearch.TabIndex = 17;
             this.txtToSearch.Text = "";
             // 
@@ -238,12 +237,13 @@ namespace remNamer
             this.txtReplace.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtReplace.Depth = 0;
             this.txtReplace.Font = new System.Drawing.Font("Roboto", 12F);
-            this.txtReplace.Location = new System.Drawing.Point(232, 295);
+            this.txtReplace.Location = new System.Drawing.Point(309, 363);
+            this.txtReplace.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtReplace.MaxLength = 50;
             this.txtReplace.MouseState = MaterialSkin.MouseState.OUT;
             this.txtReplace.Multiline = false;
             this.txtReplace.Name = "txtReplace";
-            this.txtReplace.Size = new System.Drawing.Size(374, 50);
+            this.txtReplace.Size = new System.Drawing.Size(499, 50);
             this.txtReplace.TabIndex = 18;
             this.txtReplace.Text = "";
             // 
@@ -253,8 +253,7 @@ namespace remNamer
             this.lblTextToSearch.AutoSize = true;
             this.lblTextToSearch.Depth = 0;
             this.lblTextToSearch.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.lblTextToSearch.Location = new System.Drawing.Point(229, 189);
-            this.lblTextToSearch.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblTextToSearch.Location = new System.Drawing.Point(305, 233);
             this.lblTextToSearch.MouseState = MaterialSkin.MouseState.HOVER;
             this.lblTextToSearch.Name = "lblTextToSearch";
             this.lblTextToSearch.Size = new System.Drawing.Size(101, 19);
@@ -267,8 +266,7 @@ namespace remNamer
             this.lblReplace.AutoSize = true;
             this.lblReplace.Depth = 0;
             this.lblReplace.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.lblReplace.Location = new System.Drawing.Point(229, 273);
-            this.lblReplace.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblReplace.Location = new System.Drawing.Point(305, 336);
             this.lblReplace.MouseState = MaterialSkin.MouseState.HOVER;
             this.lblReplace.Name = "lblReplace";
             this.lblReplace.Size = new System.Drawing.Size(57, 19);
@@ -284,11 +282,11 @@ namespace remNamer
             this.btnPreview.DrawShadows = true;
             this.btnPreview.HighEmphasis = true;
             this.btnPreview.Icon = null;
-            this.btnPreview.Location = new System.Drawing.Point(613, 295);
-            this.btnPreview.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            this.btnPreview.Location = new System.Drawing.Point(817, 363);
+            this.btnPreview.Margin = new System.Windows.Forms.Padding(5, 7, 5, 7);
             this.btnPreview.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnPreview.Name = "btnPreview";
-            this.btnPreview.Size = new System.Drawing.Size(150, 50);
+            this.btnPreview.Size = new System.Drawing.Size(200, 50);
             this.btnPreview.TabIndex = 21;
             this.btnPreview.Text = "Preview";
             this.btnPreview.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
@@ -298,9 +296,9 @@ namespace remNamer
             // 
             // FrmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(900, 700);
+            this.ClientSize = new System.Drawing.Size(1200, 862);
             this.Controls.Add(this.btnPreview);
             this.Controls.Add(this.lblReplace);
             this.Controls.Add(this.lblTextToSearch);
@@ -317,10 +315,10 @@ namespace remNamer
             this.Controls.Add(this.dgvPatterns);
             this.Controls.Add(this.dgvFileInfo);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2);
-            this.MinimumSize = new System.Drawing.Size(900, 700);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MinimumSize = new System.Drawing.Size(1200, 862);
             this.Name = "FrmMain";
-            this.Padding = new System.Windows.Forms.Padding(2);
+            this.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Text = "RemNamer";
             ((System.ComponentModel.ISupportInitialize)(this.dgvFileInfo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPatterns)).EndInit();
