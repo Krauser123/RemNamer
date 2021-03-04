@@ -11,7 +11,7 @@ namespace remNamer
 {
     public partial class FrmMain : MaterialForm
     {
-        private CommonOpenFileDialog cmdDialog = new CommonOpenFileDialog();
+        private OpenFileDialog cmdDialog = new OpenFileDialog();
         private BindingSource bindingSource = new BindingSource();
         private List<FileToRename> fileList = new List<FileToRename>();
         private MaterialSkinManager materialSkinManager;
@@ -25,8 +25,11 @@ namespace remNamer
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
 
-            cmdDialog.IsFolderPicker = true;
-            cmdDialog.EnsurePathExists = true;
+            //Windows not allow select folder without this
+            cmdDialog.ValidateNames = false;
+            cmdDialog.CheckFileExists = false;
+            cmdDialog.CheckPathExists = true;
+            cmdDialog.FileName = "Folder Selection";
         }
 
         private void LoadFilesToDataGrid()
@@ -111,15 +114,15 @@ namespace remNamer
             {
                 cmdDialog.InitialDirectory = txtOriginDirectory.Text;
             }
-            
-            if (cmdDialog.ShowDialog() == CommonFileDialogResult.Ok)
+
+            if (cmdDialog.ShowDialog() == DialogResult.OK)
             {
                 if (cmdDialog.FileName.StartsWith(Environment.GetEnvironmentVariable("windir")))
                 {
                     MessageBox.Show("System files is not allowed.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
 
-                txtOriginDirectory.Text = cmdDialog.FileName;
+                txtOriginDirectory.Text = cmdDialog.FileName.Replace("Folder Selection", "");
 
                 LoadFilesToDataGrid();
             }
