@@ -86,8 +86,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Executable\MaterialSkin.dll" />
+    <Content Include="Executable\remNamer.exe" />
     <Content Include="icon.ico" />
     <Content Include="icon.png" />
+    <Content Include="Images\RemNamer001.jpg" />
+    <Content Include="Images\RemNamer002.jpg" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

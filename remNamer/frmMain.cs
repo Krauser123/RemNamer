@@ -60,30 +60,7 @@ namespace remNamer
         private void SwitchViewMode_CheckedChanged(object sender, EventArgs e)
         {
             MaterialSwitch switchView = (MaterialSwitch)sender;
-            Color gridForeColor = Color.Black;
-            Color backColor = Color.White;
-            MaterialSkinManager.Themes themeToSet = MaterialSkinManager.Themes.LIGHT;
-
-            if (switchView.Checked)
-            {
-                gridForeColor = Color.White;
-                backColor = Color.DarkGray;
-                themeToSet = MaterialSkinManager.Themes.DARK;
-            }
-
-            //dgv not works well with dark mode so we need to change it manually
-            dgvFileInfo.ForeColor = gridForeColor;
-            dgvPatterns.ForeColor = gridForeColor;
-            materialSkinManager.Theme = themeToSet;
-
-            foreach (DataGridViewRow row in dgvFileInfo.Rows)
-            {
-                row.DefaultCellStyle.BackColor = backColor;
-            }
-            foreach (DataGridViewRow row in dgvPatterns.Rows)
-            {
-                row.DefaultCellStyle.BackColor = backColor;
-            }
+            ChangeTheme(switchView.Checked);
         }
 
         private void DgvPatterns_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -146,6 +123,35 @@ namespace remNamer
             }
         }
 
+        private void ChangeTheme(Boolean isDarkTheme)
+        {
+
+            Color gridForeColor = Color.Black;
+            Color backColor = Color.White;
+            MaterialSkinManager.Themes themeToSet = MaterialSkinManager.Themes.LIGHT;
+
+            if (isDarkTheme)
+            {
+                gridForeColor = Color.White;
+                backColor = Color.DarkGray;
+                themeToSet = MaterialSkinManager.Themes.DARK;
+            }
+
+            //dgv not works well with dark mode so we need to change it manually
+            dgvFileInfo.ForeColor = gridForeColor;
+            dgvPatterns.ForeColor = gridForeColor;
+            materialSkinManager.Theme = themeToSet;
+
+            foreach (DataGridViewRow row in dgvFileInfo.Rows)
+            {
+                row.DefaultCellStyle.BackColor = backColor;
+            }
+            foreach (DataGridViewRow row in dgvPatterns.Rows)
+            {
+                row.DefaultCellStyle.BackColor = backColor;
+            }
+        }
+
         private void LoadDataBinding_Files(bool searchPatterns)
         {
             bindingSource.DataSource = fileList;
@@ -187,6 +193,11 @@ namespace remNamer
                 catch (DirectoryNotFoundException e)
                 {
                     MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    //Need to refresh material theme...
+                    ChangeTheme(switchViewMode.Checked);
                 }
             }
         }
