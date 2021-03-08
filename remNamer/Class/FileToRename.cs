@@ -7,33 +7,44 @@ namespace remNamer
 {
     internal class FileToRename
     {
-        [Browsable(false)]
-        public string Location { get; set; }
+        //These properties do not appears in DataGrids
         [Browsable(false)]
         public string NameWithoutExtension { get; set; }
         [Browsable(false)]
-        public FileInfo ExtendedInfo { get; set; }
+        private string Location { get; set; }        
         [Browsable(false)]
-        public string LocationAfterChanges { get; set; }
+        private FileInfo ExtendedInfo { get; set; }
+        [Browsable(false)]
+        private string LocationAfterChanges { get; set; }
+        [Browsable(false)]
+        private string _nameAfterChanges { get; set; }
+        [Browsable(false)]
+        private string FileExtension { get; set; }
 
-        public string Name { get; set; }        
-        public string NameAfterChanges { get; set; }
+        //Public Properties
+        public string Name { get; set; }
+        public string NameAfterChanges { get { return this._nameAfterChanges; } }
         public string Created { get; set; }
         public string Modified { get; set; }
         public string FileSize { get; set; }
 
         public FileToRename(string path)
         {
+            //Set location
             this.Location = this.LocationAfterChanges = path;
 
             //Get name
-            this.Name = this.NameAfterChanges = Path.GetFileName(path);
+            this.Name = _nameAfterChanges = Path.GetFileName(path);            
             this.NameWithoutExtension = Path.GetFileNameWithoutExtension(path);
 
+            //Get extension
+            this.FileExtension = Path.GetExtension(path);
+
+            //Load extended properties
             LoadFileInfo();
         }
 
-        public void LoadFileInfo()
+        private void LoadFileInfo()
         {
             //Only load if is null
             if (ExtendedInfo == null)
@@ -41,11 +52,35 @@ namespace remNamer
                 ExtendedInfo = new FileInfo(this.Location);
                 Created = ExtendedInfo.CreationTime.ToShortDateString();
                 Modified = ExtendedInfo.LastWriteTime.ToShortDateString();
-                FileSize = GetFileSize();
+                FileSize = GetFormatedFileSize();
             }
         }
 
-        private string GetFileSize()
+        public void RenameFile()
+        {
+            try
+            {
+                this.LocationAfterChanges = this.LocationAfterChanges.Replace(this.Name, this.NameAfterChanges);
+                File.Move(this.Location, this.LocationAfterChanges);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+            }
+        }
+
+        public void SetNameAfterChanges(string nameToSet)
+        {
+            //If the name doesn't have an extension we need to append it
+            if (!Path.HasExtension(nameToSet))
+            {
+                nameToSet += this.FileExtension;
+            }
+
+            _nameAfterChanges = nameToSet;
+        }
+
+        private string GetFormatedFileSize()
         {
             long length = ExtendedInfo.Length;
 
@@ -61,23 +96,10 @@ namespace remNamer
         {
             for (int i = 0; i < unitsToDivide; i++)
             {
-                length = length / 1024.0;
+                length /= 1024;
             }
 
             return Math.Round(Convert.ToDouble(length), 2);
-        }
-
-        public void RenameFile()
-        {
-            try
-            {
-                this.LocationAfterChanges = this.LocationAfterChanges.Replace(this.Name, this.NameAfterChanges);
-                File.Move(this.Location, this.LocationAfterChanges);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error");
-            }
         }
     }
 }

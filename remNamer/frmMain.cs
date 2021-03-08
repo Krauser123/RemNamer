@@ -53,7 +53,7 @@ namespace remNamer
 
                 txtOriginDirectory.Text = cmdDialog.FileName.Replace("Folder Selection", "");
 
-                ApplyFilter();
+                ApplyExtensionFilter();
             }
         }
 
@@ -132,7 +132,7 @@ namespace remNamer
             }
 
             //Reload files
-            ApplyFilter();
+            ApplyExtensionFilter();
 
             //Unblock form
             this.Enabled = true;
@@ -142,7 +142,7 @@ namespace remNamer
         {
             if (!String.IsNullOrEmpty(txtExtensionFilter.Text) && !String.IsNullOrWhiteSpace(txtExtensionFilter.Text))
             {
-                ApplyFilter();
+                ApplyExtensionFilter();
             }
         }
 
@@ -166,7 +166,7 @@ namespace remNamer
 
         private void LoadFilesToDataGrid(string[] extensionFilters)
         {
-            if (txtOriginDirectory.Text != string.Empty)
+            if (txtOriginDirectory.Text != string.Empty && !Path.HasExtension(txtOriginDirectory.Text))
             {
                 //Clean list from previous executions
                 fileList = new List<FileToRename>();
@@ -194,7 +194,16 @@ namespace remNamer
         private List<string> GetFiles(string initialDir, bool recursiveSearch, string[] extensionFilters)
         {
             //Get files in root directory
-            var files = extensionFilters.SelectMany(filter => Directory.GetFiles(initialDir, filter)).ToList();
+            List<string> files = null;
+
+            if (extensionFilters != null)
+            {
+                files = extensionFilters.SelectMany(filter => Directory.GetFiles(initialDir, filter)).ToList();
+            }
+            else
+            {
+                files = Directory.GetFiles(initialDir).ToList();
+            }
 
             if (recursiveSearch)
             {
@@ -212,30 +221,47 @@ namespace remNamer
 
         private void LoadDataBinding_Patterns(Dictionary<string, int> dict)
         {
-            BindingSource bindingSourcePattern = new BindingSource();
-            bindingSourcePattern.DataSource = dict;
-            dgvPatterns.DataSource = bindingSourcePattern;
+            try
+            {
+                if (dict.Values.Count > 0)
+                {
+                    BindingSource bindingSourcePattern = new BindingSource();
+                    bindingSourcePattern.DataSource = dict;
+                    dgvPatterns.DataSource = bindingSourcePattern;
 
-            dgvPatterns.AllowUserToResizeColumns = true;
-            dgvPatterns.AllowUserToResizeRows = true;
+                    dgvPatterns.AllowUserToResizeColumns = true;
+                    dgvPatterns.AllowUserToResizeRows = true;
 
-            dgvPatterns.Columns[0].HeaderText = "Word";
-            dgvPatterns.Columns[1].Visible = false;
+                    dgvPatterns.Columns[0].HeaderText = "Word";
+                    dgvPatterns.Columns[1].Visible = false;
 
-            dgvPatterns.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                    dgvPatterns.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
-
-        private void ApplyFilter()
+        private void ApplyExtensionFilter()
         {
             //Get filters
-            string availableExt = txtExtensionFilter.Text.Replace("*", "").Trim().ToLower();
+            string availableExt = txtExtensionFilter.Text.Trim();
             string[] availableExtArray = new string[] { availableExt };
 
-            //Multifilter
-            if (availableExt.IndexOf(";") != -1)
+            //First validate filter
+            if (!string.IsNullOrEmpty(txtExtensionFilter.Text) && !string.IsNullOrWhiteSpace(txtExtensionFilter.Text))
             {
-                availableExtArray = availableExt.Split(';');
+                //Multifilter
+                if (availableExt.IndexOf(";") != -1)
+                {
+                    availableExtArray = availableExt.Split(';');
+                }
+            }
+            else
+            {
+                availableExtArray = null;
             }
 
             LoadFilesToDataGrid(availableExtArray);
@@ -249,7 +275,7 @@ namespace remNamer
 
                 for (int i = 0; i < fileList.Count; i++)
                 {
-                    fileList[i].NameAfterChanges = titleToSet.Replace("*", (i + 1).ToString());
+                    fileList[i].SetNameAfterChanges(titleToSet.Replace("*", (i + 1).ToString()));
                 }
             }
 
@@ -262,7 +288,7 @@ namespace remNamer
             {
                 foreach (var item in fileList)
                 {
-                    item.NameAfterChanges = item.Name.Replace(txtToSearch.Text, txtReplace.Text);
+                    item.SetNameAfterChanges(item.Name.Replace(txtToSearch.Text, txtReplace.Text));
                 }
             }
 

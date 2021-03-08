@@ -50,13 +50,15 @@ namespace remNamer.Class
                     }
                 }
             }
-
-            //Remove less common matches
-            var maxValue = dict.Values.Max() / MIN_CRITERIA;
-            var itemsToRemove = dict.Where(o => o.Value <= maxValue).ToList();
-            foreach (var item in itemsToRemove)
+            if (dict.Values.Count > 0)
             {
-                dict.Remove(item.Key);
+                //Remove less common matches
+                var maxValue = dict.Values.Max() / MIN_CRITERIA;
+                var itemsToRemove = dict.Where(o => o.Value <= maxValue).ToList();
+                foreach (var item in itemsToRemove)
+                {
+                    dict.Remove(item.Key);
+                }
             }
 
             return dict;
