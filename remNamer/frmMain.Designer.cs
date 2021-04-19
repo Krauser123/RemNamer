@@ -1,4 +1,4 @@
-﻿
+
 namespace remNamer
 {
     partial class FrmMain
@@ -326,6 +326,7 @@ namespace remNamer
             this.btnPreview.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
             this.btnPreview.UseAccentColor = false;
             this.btnPreview.UseVisualStyleBackColor = true;
+            this.btnPreview.Click += new System.EventHandler(this.BtnPreview_Click);
             // 
             // lblReplace
             // 
@@ -521,4 +522,3 @@ namespace remNamer
         private MaterialSkin.Controls.MaterialTextBox txtIncremental;
     }
 }
-
