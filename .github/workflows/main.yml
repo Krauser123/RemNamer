@@ -1,40 +1,19 @@
-name: Build and Deploy
+name: Example2.NetFramework.CI
 
-on:
-  push:
-    branches:
-      - master
-
-env:
-  AZURE_WEBAPP_NAME: remNamer.sln     # set this to your application's name
-  AZURE_WEBAPP_PACKAGE_PATH: 'published'      # set this to the path to your web app project, defaults to the repository root
+on: [push]
 
 jobs:
   build:
-    name: Build and deploy
+
     runs-on: windows-latest
+
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Setup MSBuild path
-      uses: microsoft/setup-msbuild@v1.0.1
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
       with:
-        vs-version: "[16.4,16.9)"
-    
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.2
-    
-    - name: Restore NuGet packages
-      run: nuget restore remNamer.sln
-
-    - name: Build
-      run: msbuild remNamer.sln /p:Configuration=Release
-
-    - name: Publish to folder
-      run: msbuild remNamer.sln /p:Configuration=Release /p:DeployOnBuild=true /t:WebPublish /p:WebPublishMethod=FileSystem /p:publishUrl=published /p:PackageAsSingleFile=false
-
-    - name: Publish artifacts
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: webapp
-        path: published
+        dotnet-version: 2.2.108
+    - name: Build with dotnet
+      run: dotnet build --configuration Release
+    - name: And then we test it
+      run: dotnet test --verbosity normal
