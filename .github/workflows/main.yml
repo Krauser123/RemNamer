@@ -27,9 +27,6 @@ jobs:
       
     - name: Navigate to Workspace
       run: cd $GITHUB_WORKSPACE
-
-    - name: Create Build Directory
-      run: mkdir _build
       
     - name: Restore Packages
       run: nuget restore remNamer.sln
@@ -39,8 +36,12 @@ jobs:
         msbuild.exe remNamer.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="../_build"
     
     - name: 'Zip files'
-      run: tar -cvf release-artifact.zip D:\a\RemNamer\RemNamer\remNamer\bin\Release\
+      run: tar -c -v -f release-artifact.zip D:\a\RemNamer\RemNamer\remNamer\bin\Release
+
+    - run: dir D:\a\RemNamer\RemNamer\remNamer\bin\Release\
     
+    - run: dir D:\a\RemNamer\RemNamer\remNamer\bin\Release\
+
     - uses: actions/upload-artifact@v2
       with:
         name: release-artifact
