@@ -36,7 +36,7 @@ jobs:
     
     - uses: actions/upload-artifact@v2
       with:
-        name: my-artifact
+        name: release-artifact
         path: D:\a\RemNamer\RemNamer\remNamer\bin\Release\
           
     - name: Create Release
@@ -60,7 +60,7 @@ jobs:
       with:
        upload_url: ${{ steps.create_release.outputs.upload_url }}
        asset_path: ./_build/
-       asset_name: my-artifact.zip
+       asset_name: release-artifact.zip
        asset_content_type: application/zip
     - name: Publish release
       uses: StuYarrow/publish-release@v1
