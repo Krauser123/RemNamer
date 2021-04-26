@@ -1,4 +1,4 @@
-name: Build .Net Framework Forms
+name: Build .Net Forms and publish realease
 
 on:
   push:
