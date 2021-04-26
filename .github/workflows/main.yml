@@ -2,8 +2,10 @@ name: Build .Net Framework Forms
 
 on:
   push:
-    branches: master
-
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      
 jobs:
   build:
     runs-on: windows-latest
@@ -49,8 +51,7 @@ jobs:
         release_name: Release ${{ github.ref }}
         body: |
           Changes in this Release
-          - First Change
-          - Second Change
+          - Improvements, bugs, see the commits...
         draft: false
         prerelease: false
     - name: Upload release asset
