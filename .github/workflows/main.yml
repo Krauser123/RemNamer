@@ -1,4 +1,4 @@
-name: remNamer Build
+name: Build .Net Framework Forms
 
 on:
   push:
@@ -33,7 +33,13 @@ jobs:
     - name: Build Solution
       run: |
         msbuild.exe remNamer.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="../_build"
-      
+    
+    - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build project # This would actually build your project, using zip for an example artifact
+        run: |
+          zip --junk-paths my-artifact ../_build
+          
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -54,8 +60,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
        upload_url: ${{ steps.create_release.outputs.upload_url }}
-       asset_path: ./path/to/asset.zip
-       asset_name: asset.zip
+       asset_path: ./_build/
+       asset_name: my-artifact.zip
        asset_content_type: application/zip
     - name: Publish release
       uses: StuYarrow/publish-release@v1
