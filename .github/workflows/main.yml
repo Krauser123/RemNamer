@@ -38,11 +38,16 @@ jobs:
       run: |
         msbuild.exe remNamer.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="../_build"
     
+    - name: 'Zip files'
+      run: tar -cvf release-artifact.zip D:\a\RemNamer\RemNamer\remNamer\bin\Release\
+    
     - uses: actions/upload-artifact@v2
       with:
         name: release-artifact
         path: D:\a\RemNamer\RemNamer\remNamer\bin\Release\
-          
+
+    - run: dir D:\a\RemNamer\RemNamer\remNamer\bin\Release\
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
