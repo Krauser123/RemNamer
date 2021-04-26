@@ -35,10 +35,10 @@ jobs:
         msbuild.exe remNamer.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="../_build"
     
     - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Build project # This would actually build your project, using zip for an example artifact
-        run: |
-          zip --junk-paths my-artifact ../_build
+      uses: actions/checkout@v2
+    - name: Build project # This would actually build your project, using zip for an example artifact
+      run: |
+         zip --junk-paths my-artifact ../_build
           
     - name: Create Release
       id: create_release
