@@ -3,8 +3,8 @@ name: Build .Net Forms and publish realease
 #Trigger
 on:
   push:
-    branches:
-      - master
+    #branches:
+     # - master
     tags:
       - v*
       
