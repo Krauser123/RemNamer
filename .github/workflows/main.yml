@@ -1,33 +1,40 @@
-name: NetFrameworkBuild
+name: Build and Deploy
 
 on:
   push:
-    branches: master
+    branches:
+      - master
+
+env:
+  AZURE_WEBAPP_NAME: remNamer.sln     # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: 'published'      # set this to the path to your web app project, defaults to the repository root
 
 jobs:
   build:
+    name: Build and deploy
     runs-on: windows-latest
-
     steps:
     - uses: actions/checkout@v2
     
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1
-
+    - name: Setup MSBuild path
+      uses: microsoft/setup-msbuild@v1.0.1
+      with:
+        vs-version: "[16.4,16.9)"
+    
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1.0.2
-      
-    - name: Navigate to Workspace
-      run: cd $GITHUB_WORKSPACE
-
-    - name: Create Build Directory
-      run: mkdir _build
-      
-    - name: Restore Packages
-      run: nuget restore EzRep.sln
-
-    - name: Build Solution
-      run: |
-        msbuild.exe remNamer.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="../_build"
-        
     
+    - name: Restore NuGet packages
+      run: nuget restore remNamer.sln
+
+    - name: Build
+      run: msbuild remNamer.sln /p:Configuration=Release
+
+    - name: Publish to folder
+      run: msbuild remNamer.sln /p:Configuration=Release /p:DeployOnBuild=true /t:WebPublish /p:WebPublishMethod=FileSystem /p:publishUrl=published /p:PackageAsSingleFile=false
+
+    - name: Publish artifacts
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: webapp
+        path: published
