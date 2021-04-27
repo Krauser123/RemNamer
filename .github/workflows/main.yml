@@ -40,6 +40,7 @@ jobs:
     
     - name: 'Zip files'
       run: tar -c -v -f D:\a\RemNamer\RemNamer\remNamer\bin\Release\release-artifact.zip D:\a\RemNamer\RemNamer\remNamer\bin\Release
+      continue-on-error: true
         
     - run: dir D:\a\RemNamer\RemNamer\remNamer\bin\Release\
 
