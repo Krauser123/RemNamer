@@ -1,0 +1,25 @@
+name: TEST zip
+
+#Trigger
+on:
+  push:
+    branches:
+      - master
+      
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+     
+    - name: Navigate to Workspace
+      run: cd $GITHUB_WORKSPACE     
+ 
+    - name: See curent dir
+      run: dir    
+    
+    - name: 'Zip files'
+      run: tar -c -v -f D:\a\RemNamer\RemNamer\remNamer\release-artifact.zip D:\a\RemNamer\RemNamer\remNamer\bin\Release
+        
+    - run: dir D:\a\RemNamer\RemNamer\remNamer\
