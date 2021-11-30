@@ -248,6 +248,7 @@ namespace remNamer
                 if (dict.Values.Count > 0)
                 {
                     BindingSource bindingSourcePattern = new BindingSource();
+                    dict = dict.OrderBy(o => o.Key).ToDictionary(x => x.Key, x => x.Value);
                     bindingSourcePattern.DataSource = dict;
                     dgvPatterns.DataSource = bindingSourcePattern;
 
@@ -310,5 +311,44 @@ namespace remNamer
             LoadDataBinding_Files(false);
         }
 
+        private void TxtToSearch_TextChanged(object sender, EventArgs e)
+        {
+            if (txtToSearch.Text != string.Empty)
+            {
+                btnPreview.Enabled = true;
+            }
+            else
+            {
+                btnPreview.Enabled = false;
+            }
+
+            ChangeBtnRenameEnable();
+        }
+
+        private void TxtIncremental_TextChanged(object sender, EventArgs e)
+        {
+            if (txtIncremental.Text != string.Empty)
+            {
+                btnPreviewIncremental.Enabled = true;
+            }
+            else
+            {
+                btnPreviewIncremental.Enabled = false;
+            }
+
+            ChangeBtnRenameEnable();
+        }
+
+        private void ChangeBtnRenameEnable()
+        {
+            if (txtIncremental.Text != string.Empty || txtToSearch.Text != string.Empty)
+            {
+                btnRename.Enabled = true;
+            }
+            else
+            {
+                btnRename.Enabled = false;
+            }
+        }
     }
 }
