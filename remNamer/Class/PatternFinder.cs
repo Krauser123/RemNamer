@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace remNamer.Class
 {
@@ -8,6 +9,8 @@ namespace remNamer.Class
     {
         const int LENGTH_CRITERIA = 3;
         const int MIN_CRITERIA = 3;
+        public const string TextForAnyInParenthesis = "(% Any %)";
+        public const string TextForAnyInBrackets = "[% Any %]";
 
         public Dictionary<string, int> SearchPatterns(List<FileToRename> files)
         {
@@ -34,11 +37,13 @@ namespace remNamer.Class
             text = text.Replace(",", "");
 
             //Create an array of words
-            string[] arr = text.Split(' ');
+            string[] splitedText = text.Split(new string[] { " ", "[", "(", ")", "]" }, StringSplitOptions.RemoveEmptyEntries);
+            
+            var regexItem = new Regex("[^a-zA-Z0-9_.]+");
 
-            foreach (string word in arr)
+            foreach (string word in splitedText)
             {
-                if (word.Length >= LENGTH_CRITERIA)
+                if (word.Length >= LENGTH_CRITERIA || regexItem.IsMatch(word))
                 {
                     if (dict.ContainsKey(word))
                     {
@@ -61,12 +66,32 @@ namespace remNamer.Class
                 }
             }
 
+            //Add standard for brackets and parenthesis
+            dict.Add(TextForAnyInBrackets, 0);
+            dict.Add(TextForAnyInParenthesis, 0);
+
             return dict;
         }
 
         private List<FileToRename> GetRandomItemsAsExample(List<FileToRename> files)
         {
-            int numberOfItemsToPick = Convert.ToInt32(files.Count / 8);
+            int numberOfItemsToPick = 5;
+            if (files.Count > 50)
+            {
+                numberOfItemsToPick = Convert.ToInt32(files.Count / 5);
+            }
+            else if (files.Count > 80)
+            {            
+                numberOfItemsToPick = Convert.ToInt32(files.Count / 8);
+            }
+            else if (files.Count > 150)
+            {
+                numberOfItemsToPick = Convert.ToInt32(files.Count / 10);
+            }
+            else if (files.Count > 400)
+            {
+                numberOfItemsToPick = Convert.ToInt32(files.Count / 15);
+            }
 
             //Pick X random items
             Random rnd = new Random();

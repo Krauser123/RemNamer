@@ -65,7 +65,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class\CollectionHelper.cs" />
     <Compile Include="Class\FileToRename.cs" />
+    <Compile Include="Class\Helper.cs" />
     <Compile Include="Class\PatternFinder.cs" />
     <Compile Include="FrmMain.cs">
       <SubType>Form</SubType>

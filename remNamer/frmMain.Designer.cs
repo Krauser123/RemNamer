@@ -43,7 +43,7 @@ namespace remNamer
             this.txtExtensionFilter = new MaterialSkin.Controls.MaterialTextBox();
             this.btnApplyFileFilter = new MaterialSkin.Controls.MaterialButton();
             this.lblFileFilters = new MaterialSkin.Controls.MaterialLabel();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabCtrlSearchTypes = new System.Windows.Forms.TabControl();
             this.tabPgReplace = new System.Windows.Forms.TabPage();
             this.btnPreview = new MaterialSkin.Controls.MaterialButton();
             this.lblReplace = new MaterialSkin.Controls.MaterialLabel();
@@ -56,7 +56,7 @@ namespace remNamer
             this.txtIncremental = new MaterialSkin.Controls.MaterialTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvFileInfo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPatterns)).BeginInit();
-            this.tabControl1.SuspendLayout();
+            this.tabCtrlSearchTypes.SuspendLayout();
             this.tabPgReplace.SuspendLayout();
             this.tabPgIncremental.SuspendLayout();
             this.SuspendLayout();
@@ -278,18 +278,18 @@ namespace remNamer
             this.lblFileFilters.TabIndex = 24;
             this.lblFileFilters.Text = "Extension Filter";
             // 
-            // tabControl1
+            // tabCtrlSearchTypes
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tabCtrlSearchTypes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabPgReplace);
-            this.tabControl1.Controls.Add(this.tabPgIncremental);
-            this.tabControl1.Location = new System.Drawing.Point(536, 338);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(511, 290);
-            this.tabControl1.TabIndex = 25;
+            this.tabCtrlSearchTypes.Controls.Add(this.tabPgReplace);
+            this.tabCtrlSearchTypes.Controls.Add(this.tabPgIncremental);
+            this.tabCtrlSearchTypes.Location = new System.Drawing.Point(536, 338);
+            this.tabCtrlSearchTypes.Margin = new System.Windows.Forms.Padding(4);
+            this.tabCtrlSearchTypes.Name = "tabCtrlSearchTypes";
+            this.tabCtrlSearchTypes.SelectedIndex = 0;
+            this.tabCtrlSearchTypes.Size = new System.Drawing.Size(511, 290);
+            this.tabCtrlSearchTypes.TabIndex = 25;
             // 
             // tabPgReplace
             // 
@@ -467,7 +467,7 @@ namespace remNamer
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1439, 946);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.tabCtrlSearchTypes);
             this.Controls.Add(this.lblFileFilters);
             this.Controls.Add(this.txtExtensionFilter);
             this.Controls.Add(this.btnApplyFileFilter);
@@ -489,7 +489,7 @@ namespace remNamer
             this.Text = "RemNamer";
             ((System.ComponentModel.ISupportInitialize)(this.dgvFileInfo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPatterns)).EndInit();
-            this.tabControl1.ResumeLayout(false);
+            this.tabCtrlSearchTypes.ResumeLayout(false);
             this.tabPgReplace.ResumeLayout(false);
             this.tabPgReplace.PerformLayout();
             this.tabPgIncremental.ResumeLayout(false);
@@ -513,7 +513,7 @@ namespace remNamer
         private MaterialSkin.Controls.MaterialTextBox txtExtensionFilter;
         private MaterialSkin.Controls.MaterialButton btnApplyFileFilter;
         private MaterialSkin.Controls.MaterialLabel lblFileFilters;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl tabCtrlSearchTypes;
         private System.Windows.Forms.TabPage tabPgReplace;
         private System.Windows.Forms.TabPage tabPgIncremental;
         private MaterialSkin.Controls.MaterialButton btnPreview;

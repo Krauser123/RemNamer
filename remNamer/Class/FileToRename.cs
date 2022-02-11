@@ -9,7 +9,7 @@ namespace remNamer
     {
         //These properties do not appears in DataGrids
         [Browsable(false)]
-        public string NameWithoutExtension { get; set; }
+        public string NameWithoutExtension { get; }
         [Browsable(false)]
         private string Location { get; set; }        
         [Browsable(false)]
@@ -22,11 +22,11 @@ namespace remNamer
         private string FileExtension { get; set; }
 
         //Public Properties
-        public string Name { get; set; }
+        public string Name { get; }
         public string NameAfterChanges { get { return this._nameAfterChanges; } }
-        public string Created { get; set; }
-        public string Modified { get; set; }
-        public string FileSize { get; set; }
+        public string Created { get; }
+        public string Modified { get; }
+        public string FileSize { get; }
 
         public FileToRename(string path)
         {
@@ -41,19 +41,10 @@ namespace remNamer
             this.FileExtension = Path.GetExtension(path);
 
             //Load extended properties
-            LoadFileInfo();
-        }
-
-        private void LoadFileInfo()
-        {
-            //Only load if is null
-            if (ExtendedInfo == null)
-            {
-                ExtendedInfo = new FileInfo(this.Location);
-                Created = ExtendedInfo.CreationTime.ToShortDateString();
-                Modified = ExtendedInfo.LastWriteTime.ToShortDateString();
-                FileSize = GetFormatedFileSize();
-            }
+            ExtendedInfo = new FileInfo(this.Location);
+            Created = ExtendedInfo.CreationTime.ToShortDateString();
+            Modified = ExtendedInfo.LastWriteTime.ToShortDateString();
+            FileSize = GetFormatedFileSize();
         }
 
         public void RenameFile()

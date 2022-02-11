@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using MaterialSkin;
 using MaterialSkin.Controls;
@@ -16,6 +17,7 @@ namespace remNamer
         private List<FileToRename> FileList = new List<FileToRename>();
         private MaterialSkinManager MaterialSkinManager;
         private PatternFinder PatternFinder = new PatternFinder();
+        BindingSource BindingSource = new BindingSource();
 
         public FrmMain()
         {
@@ -44,6 +46,8 @@ namespace remNamer
             dgvPatterns.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
+        #region Controls - Events
+
         private void BtnOpenFolder_Click(object sender, EventArgs e)
         {
             //User can set the directory directly
@@ -60,7 +64,7 @@ namespace remNamer
                 }
 
                 txtOriginDirectory.Text = OpenFileDialog.FileName.Replace("Folder Selection", "");
-
+                OpenFileDialog.FileName = "Folder Selection";
                 ApplyExtensionFilter();
             }
         }
@@ -81,46 +85,30 @@ namespace remNamer
                     preSpace = " ";
                 }
 
-                txtToSearch.AppendText(preSpace + dgvPatterns.CurrentRow.Cells[0].Value.ToString());
+                if (tabCtrlSearchTypes.SelectedIndex == 0)
+                {
+                    txtToSearch.AppendText(preSpace + dgvPatterns.CurrentRow.Cells[0].Value.ToString());
+                }
+                else
+                {
+                    txtIncremental.AppendText(preSpace + dgvPatterns.CurrentRow.Cells[0].Value.ToString());
+                }
             }
         }
 
         private void BtnPreview_Click(object sender, EventArgs e)
         {
-            PreviewSearchAndReplaceChanges();
+            RenameFiles(false);
         }
 
         private void BtnPreviewIncremental_Click(object sender, EventArgs e)
         {
-            PreviewIncrementalChanges();
+            RenameFiles(false);
         }
 
         private void BtnRename_Click(object sender, EventArgs e)
         {
-            //Be sure that collections are updated
-            if (tabControl1.SelectedIndex == 0)
-            {
-                PreviewSearchAndReplaceChanges();
-            }
-            else
-            {
-                PreviewIncrementalChanges();
-            }
-
-            //Block form
-            this.Enabled = false;
-
-            //Change files
-            foreach (var item in this.FileList)
-            {
-                item.RenameFile();
-            }
-
-            //Reload files
-            ApplyExtensionFilter();
-
-            //Unblock form
-            this.Enabled = true;
+            RenameFiles(true);
         }
 
         private void BtnApplyFileFilter_Click(object sender, EventArgs e)
@@ -129,186 +117,6 @@ namespace remNamer
             {
                 ApplyExtensionFilter();
             }
-        }
-
-        private void ChangeTheme(Boolean isDarkTheme)
-        {
-
-            Color gridForeColor = Color.Black;
-            Color backColor = Color.White;
-            MaterialSkinManager.Themes themeToSet = MaterialSkinManager.Themes.LIGHT;
-
-            if (isDarkTheme)
-            {
-                gridForeColor = Color.White;
-                backColor = Color.DarkGray;
-                themeToSet = MaterialSkinManager.Themes.DARK;
-            }
-
-            //dgv not works well with dark mode so we need to change it manually
-            dgvFileInfo.ForeColor = gridForeColor;
-            dgvPatterns.ForeColor = gridForeColor;
-            MaterialSkinManager.Theme = themeToSet;
-
-            foreach (DataGridViewRow row in dgvFileInfo.Rows)
-            {
-                row.DefaultCellStyle.BackColor = backColor;
-            }
-            foreach (DataGridViewRow row in dgvPatterns.Rows)
-            {
-                row.DefaultCellStyle.BackColor = backColor;
-            }
-        }
-
-        private void LoadDataBinding_Files(bool searchPatterns)
-        {
-            BindingSource BindingSource = new BindingSource();
-            BindingSource.DataSource = FileList;
-            dgvFileInfo.DataSource = BindingSource;
-
-            if (searchPatterns)
-            {
-                var patternsDictionary = PatternFinder.SearchPatterns(FileList);
-                LoadDataBinding_Patterns(patternsDictionary);
-            }
-
-            //Need to refresh material theme...
-            ChangeTheme(switchViewMode.Checked);
-        }
-
-        private void LoadFilesToDataGrid(string[] extensionFilters)
-        {
-            if (txtOriginDirectory.Text != string.Empty && !Path.HasExtension(txtOriginDirectory.Text))
-            {
-                //Clean list from previous executions
-                FileList = new List<FileToRename>();
-
-                try
-                {
-                    var files = GetFiles(txtOriginDirectory.Text, chkSearchFilesRecursively.Checked, extensionFilters);
-
-                    foreach (var item in files)
-                    {
-                        //Apply filter if exist
-                        FileList.Add(new FileToRename(item));
-                    }
-
-                    //Refresh grids
-                    LoadDataBinding_Files(chkSearchPatterns.Checked);
-                }
-                catch (DirectoryNotFoundException e)
-                {
-                    MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private List<string> GetFiles(string initialDirPath, bool recursiveSearch, string[] extensionFilters)
-        {
-            //Get files in root directory
-            List<string> files = new List<string>();
-
-            if (recursiveSearch)
-            {
-                var directories = Directory.GetDirectories(initialDirPath);
-
-                foreach (var subDirectoryPath in directories)
-                {
-                    var subItems = GetFilesUsingFilters(subDirectoryPath, extensionFilters);
-                    files.AddRange(subItems);
-                }
-            }
-            else
-            {
-                files = GetFilesUsingFilters(initialDirPath, extensionFilters);
-            }
-
-            return files;
-        }
-
-        private List<string> GetFilesUsingFilters(string directoryPath, string[] extensionFilters)
-        {
-            List<string> files = null;
-            if (extensionFilters != null)
-            {
-                files = extensionFilters.SelectMany(filter => Directory.GetFiles(directoryPath, filter)).ToList();
-            }
-            else
-            {
-                files = Directory.GetFiles(directoryPath).ToList();
-            }
-
-            return files;
-        }
-
-        private void LoadDataBinding_Patterns(Dictionary<string, int> dict)
-        {
-            try
-            {
-                if (dict.Values.Count > 0)
-                {
-                    BindingSource bindingSourcePattern = new BindingSource();
-                    dict = dict.OrderBy(o => o.Key).ToDictionary(x => x.Key, x => x.Value);
-                    bindingSourcePattern.DataSource = dict;
-                    dgvPatterns.DataSource = bindingSourcePattern;
-
-                    dgvPatterns.Columns[0].HeaderText = "Word";
-                    dgvPatterns.Columns[1].Visible = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void ApplyExtensionFilter()
-        {
-            //Get filters
-            string availableExt = txtExtensionFilter.Text.Trim();
-            string[] availableExtArray = null;
-
-            //First validate filter
-            if (!string.IsNullOrEmpty(txtExtensionFilter.Text)
-                && !string.IsNullOrWhiteSpace(txtExtensionFilter.Text)
-                && availableExt.IndexOf(";") != -1)
-            {
-                //Multifilter                
-                availableExtArray = availableExt.Split(';');
-            }
-
-            //Refresh dgv
-            LoadFilesToDataGrid(availableExtArray);
-        }
-
-        private void PreviewIncrementalChanges()
-        {
-            if (txtIncremental.Text != string.Empty)
-            {
-                string titleToSet = txtIncremental.Text;
-
-                for (int i = 0; i < FileList.Count; i++)
-                {
-                    FileList[i].SetNameAfterChanges(titleToSet.Replace("*", (i + 1).ToString()));
-                }
-            }
-
-            //Refresh dgv
-            LoadDataBinding_Files(false);
-        }
-
-        private void PreviewSearchAndReplaceChanges()
-        {
-            if (txtToSearch.Text != string.Empty)
-            {
-                foreach (var item in FileList)
-                {
-                    item.SetNameAfterChanges(item.Name.Replace(txtToSearch.Text, txtReplace.Text));
-                }
-            }
-
-            //Refresh dgv
-            LoadDataBinding_Files(false);
         }
 
         private void TxtToSearch_TextChanged(object sender, EventArgs e)
@@ -339,6 +147,237 @@ namespace remNamer
             ChangeBtnRenameEnable();
         }
 
+        #endregion
+
+        #region Controls - Methods
+        private void LoadDataBindingDfvFiles(bool searchPatterns)
+        {
+            BindingSource.DataSource = FileList;
+            dgvFileInfo.DataSource = BindingSource;
+
+            if (searchPatterns)
+            {
+                var patternsDictionary = PatternFinder.SearchPatterns(FileList);
+                LoadDataBindingDgvPatterns(patternsDictionary);
+            }
+
+            //Need to refresh material theme...
+            ChangeTheme(switchViewMode.Checked);
+        }
+
+        private void LoadFilesToDataGrid(string[] extensionFilters)
+        {
+            if (txtOriginDirectory.Text != string.Empty && !Path.HasExtension(txtOriginDirectory.Text))
+            {
+                //Clean list from previous executions
+                FileList = new List<FileToRename>();
+
+                try
+                {
+                    var files = Helper.GetFiles(txtOriginDirectory.Text, chkSearchFilesRecursively.Checked, extensionFilters);
+
+                    foreach (var item in files)
+                    {
+                        //Apply filter if exist
+                        FileList.Add(new FileToRename(item));
+                    }
+
+                    //Refresh grids
+                    LoadDataBindingDfvFiles(chkSearchPatterns.Checked);
+                }
+                catch (DirectoryNotFoundException e)
+                {
+                    MessageBox.Show(e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Load patterns in dgvPatterns
+        /// </summary>
+        /// <param name="patterns">Patterns to load</param>
+        private void LoadDataBindingDgvPatterns(Dictionary<string, int> patterns)
+        {
+            try
+            {
+                if (patterns.Values.Count > 0)
+                {
+                    BindingSource bindingSourcePattern = new BindingSource();
+                    patterns = patterns.OrderBy(o => o.Key).ToDictionary(x => x.Key, x => x.Value);
+                    bindingSourcePattern.DataSource = patterns;
+                    dgvPatterns.DataSource = bindingSourcePattern;
+
+                    dgvPatterns.Columns[0].HeaderText = "Word";
+                    dgvPatterns.Columns[1].Visible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Rename files in disk, this operation cannot be undone
+        /// </summary>
+        /// <param name="saveInDisk">set to false to preview changes</param>
+        private void RenameFiles(bool saveInDisk)
+        {
+            //Check if we need search with RegExp
+            string textToSearch = PreviewSearchAndReplaceWithRegExp();
+
+            //Be sure that collections are updated
+            if (tabCtrlSearchTypes.SelectedIndex == 0)
+            {
+                PreviewSearchAndReplace(textToSearch);
+            }
+            else
+            {
+                PreviewIncremental(textToSearch);
+            }
+
+            //Block form
+            this.Enabled = false;
+
+            if (saveInDisk)
+            {
+                //Change files using properties
+                foreach (var item in this.FileList)
+                {
+                    item.RenameFile();
+                }
+
+                //Reload files from disk
+                ApplyExtensionFilter();
+            }
+
+            //Unblock form
+            this.Enabled = true;
+        }
+
+        /// <summary>
+        /// Change themes between metro light and dark
+        /// </summary>
+        /// <param name="isDarkTheme"></param>
+        private void ChangeTheme(bool isDarkTheme)
+        {
+
+            Color gridForeColor = Color.Black;
+            Color backColor = Color.White;
+            MaterialSkinManager.Themes themeToSet = MaterialSkinManager.Themes.LIGHT;
+
+            if (isDarkTheme)
+            {
+                gridForeColor = Color.White;
+                backColor = Color.DarkGray;
+                themeToSet = MaterialSkinManager.Themes.DARK;
+            }
+
+            //dgv not works well with dark mode so we need to change it manually
+            dgvFileInfo.ForeColor = gridForeColor;
+            dgvPatterns.ForeColor = gridForeColor;
+            MaterialSkinManager.Theme = themeToSet;
+
+            foreach (DataGridViewRow row in dgvFileInfo.Rows)
+            {
+                row.DefaultCellStyle.BackColor = backColor;
+            }
+            foreach (DataGridViewRow row in dgvPatterns.Rows)
+            {
+                row.DefaultCellStyle.BackColor = backColor;
+            }
+        }
+
+        /// <summary>
+        /// Apply extension filter set by user on dataGridView
+        /// </summary>
+        private void ApplyExtensionFilter()
+        {
+            //Get filters
+            string availableExt = txtExtensionFilter.Text.Trim();
+            string[] availableExtensions = null;
+
+            //First validate filter
+            if (!string.IsNullOrEmpty(txtExtensionFilter.Text)
+                && !string.IsNullOrWhiteSpace(txtExtensionFilter.Text)
+                && availableExt.IndexOf(";") != -1)
+            {
+                //Multifilter                
+                availableExtensions = availableExt.Split(';');
+            }
+
+            //Refresh dataGridView
+            LoadFilesToDataGrid(availableExtensions);
+        }
+
+        private void PreviewIncremental(string textToSearch)
+        {
+            if (textToSearch != string.Empty)
+            {
+                for (int i = 0; i < FileList.Count; i++)
+                {
+                    string newName = textToSearch.Replace("*", (i + 1).ToString());
+
+                    //Replace incremental
+                    FileList[i].SetNameAfterChanges(newName);
+                }
+            }
+        }
+
+        private void PreviewSearchAndReplace(string textToSearch)
+        {
+            if (textToSearch != string.Empty)
+            {
+                foreach (var item in FileList)
+                {
+                    ////We need to use name without extension because maybe you want to replace a dot
+                    string newName = item.NameWithoutExtension.Replace(textToSearch, txtReplace.Text);
+
+                    //Update properties
+                    item.SetNameAfterChanges(newName);
+                }
+            }
+        }
+
+        private string PreviewSearchAndReplaceWithRegExp()
+        {
+            string textInSelectedTextBox;
+
+            if (tabCtrlSearchTypes.SelectedIndex == 0)
+            {
+                textInSelectedTextBox = txtToSearch.Text;
+            }
+            else
+            {
+                textInSelectedTextBox = txtIncremental.Text;
+            }
+
+            //Set RegExp
+            var regBrackets = new Regex(@"\[(.*?)\]");
+            var regParenthesis = new Regex(@"\(([^\)]+)\)");
+
+            foreach (var item in FileList)
+            {
+                //If we not found the pattern we keep the original name
+                var newItemName = regBrackets.Replace(item.NameWithoutExtension, txtReplace.Text);
+                newItemName = regParenthesis.Replace(newItemName, txtReplace.Text);
+
+                //Update properties
+                item.SetNameAfterChanges(newItemName);
+            }
+
+            //Remove %Any% from next searchs
+            var txtReplaceWithoutRegExp = textInSelectedTextBox.Replace(PatternFinder.TextForAnyInBrackets, "");
+            txtReplaceWithoutRegExp = txtReplaceWithoutRegExp.Replace(PatternFinder.TextForAnyInParenthesis, "");
+
+            return txtReplaceWithoutRegExp;
+        }
+
+        /// <summary>
+        /// Handle enable state for Rename button
+        /// </summary>
         private void ChangeBtnRenameEnable()
         {
             if (txtIncremental.Text != string.Empty || txtToSearch.Text != string.Empty)
