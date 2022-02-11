@@ -1,16 +1,19 @@
-name: Build .Net Forms and publish realease
+name: Build .Net Forms and publish release
 
 #Trigger
 on:
   push:
-    branches:
-      - master
     tags:
       - v*
       
 jobs:
   build:
     runs-on: windows-latest
+
+    env:
+      Solution_Name: remNamer.sln
+      Dir_Name: RemNamer
+      Proj_Dir_Name: remNamer
 
     steps:
     - uses: actions/checkout@v2
@@ -29,27 +32,23 @@ jobs:
       run: cd $GITHUB_WORKSPACE
       
     - name: Restore Packages
-      run: nuget restore remNamer.sln
+      run: nuget restore $env:Solution_Name
 
     - name: Build Solution
       run: |
-        msbuild.exe remNamer.sln /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="../_build"
+        msbuild.exe $env:Solution_Name /nologo /nr:false /p:DeployOnBuild=true /p:DeployDefaultTarget=WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:platform="Any CPU" /p:configuration="Release" /p:PublishUrl="../_build"
     
     - name: See curent dir
       run: dir    
     
     - name: 'Zip files'
-      run: 7z a -tzip D:\a\RemNamer\RemNamer\remNamer\bin\Release\release-artifact.zip D:\a\RemNamer\RemNamer\remNamer\bin\Release
+      run: 7z a -tzip D:\a\$env:Dir_Name\$env:Dir_Name\$env:Proj_Dir_Name\bin\Release\release-artifact.zip D:\a\$env:Dir_Name\$env:Dir_Name\$env:Proj_Dir_Name\bin\Release
       continue-on-error: true
-        
-    - run: dir D:\a\RemNamer\RemNamer\remNamer\bin\Release\
 
     - uses: actions/upload-artifact@v2
       with:
         name: release-artifact
-        path: D:\a\RemNamer\RemNamer\remNamer\bin\Release\
-
-    - run: dir D:\a\RemNamer\RemNamer\remNamer\bin\Release\
+        path: D:\a\$env:Dir_Name\$env:Dir_Name\$env:Proj_Dir_Name\bin\Release\
 
     - name: Create Release
       id: create_release
@@ -70,7 +69,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
        upload_url: ${{ steps.create_release.outputs.upload_url }}
-       asset_path: D:\a\RemNamer\RemNamer\remNamer\bin\Release\release-artifact.zip
+       asset_path: D:\a\$env:Dir_Name\$env:Dir_Name\$env:Proj_Dir_Name\bin\Release\release-artifact.zip
        asset_name: release-artifact.zip
        asset_content_type: application/zip
     - name: Publish release
