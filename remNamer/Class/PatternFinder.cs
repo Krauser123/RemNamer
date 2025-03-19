@@ -31,15 +31,17 @@ namespace remNamer.Class
 
         private Dictionary<string, int> CountPatterns(string text)
         {
-            Dictionary<string, int> dict = new Dictionary<string, int>();
+            var dict = new Dictionary<string, int>();
+            var regexItem = new Regex("[^a-zA-Z0-9_.]+");
 
             //Just cleaning up a bit
             text = text.Replace(",", "");
 
             //Create an array of words
-            string[] splitedText = text.Split(new string[] { " ", "[", "(", ")", "]" }, StringSplitOptions.RemoveEmptyEntries);
-            
-            var regexItem = new Regex("[^a-zA-Z0-9_.]+");
+            string[] splitedText = text.Split(new string[] { " ", "-", "[", "(", ")", "]" }, StringSplitOptions.RemoveEmptyEntries);
+
+            // Sort the array by alphabetical order
+            Array.Sort(splitedText);
 
             foreach (string word in splitedText)
             {
@@ -47,7 +49,7 @@ namespace remNamer.Class
                 {
                     if (dict.ContainsKey(word))
                     {
-                        dict[word] = dict[word] + 1;
+                        dict[word]++;
                     }
                     else
                     {
@@ -55,16 +57,23 @@ namespace remNamer.Class
                     }
                 }
             }
-            if (dict.Values.Count > 0)
-            {
-                //Remove less common matches
-                var maxValue = dict.Values.Max() / MIN_CRITERIA;
-                var itemsToRemove = dict.Where(o => o.Value <= maxValue).ToList();
-                foreach (var item in itemsToRemove)
-                {
-                    dict.Remove(item.Key);
-                }
-            }
+
+            //if (dict.Values.Count > 0)
+            //{
+            //    //Remove less common matches
+            //    var maxValue = dict.Values.Max() / MIN_CRITERIA;
+            //    var itemsToRemove = dict.Where(o => o.Value <= maxValue).ToList();
+            //    foreach (var item in itemsToRemove)
+            //    {
+            //        dict.Remove(item.Key);
+            //    }
+
+            //    // Limit the dictionary to the top 10 elements
+            //    dict = dict.OrderByDescending(o => o.Value).Take(10).ToDictionary(o => o.Key, o => o.Value);
+            //}
+
+            // Limit the dictionary to the top 10 elements
+            dict = dict.OrderByDescending(o => o.Value).Take(10).ToDictionary(o => o.Key, o => o.Value);
 
             //Add standard for brackets and parenthesis
             dict.Add(TextForAnyInBrackets, 0);

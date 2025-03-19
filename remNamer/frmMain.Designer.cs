@@ -76,7 +76,7 @@ namespace remNamer
             this.dgvFileInfo.RowHeadersWidth = 51;
             this.dgvFileInfo.RowTemplate.Height = 24;
             this.dgvFileInfo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvFileInfo.Size = new System.Drawing.Size(1427, 305);
+            this.dgvFileInfo.Size = new System.Drawing.Size(1427, 340);
             this.dgvFileInfo.TabIndex = 2;
             // 
             // dgvPatterns
@@ -198,7 +198,7 @@ namespace remNamer
             this.btnRename.Enabled = false;
             this.btnRename.HighEmphasis = true;
             this.btnRename.Icon = null;
-            this.btnRename.Location = new System.Drawing.Point(1055, 576);
+            this.btnRename.Location = new System.Drawing.Point(1051, 575);
             this.btnRename.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.btnRename.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnRename.Name = "btnRename";
@@ -466,7 +466,7 @@ namespace remNamer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1439, 946);
+            this.ClientSize = new System.Drawing.Size(1439, 981);
             this.Controls.Add(this.tabCtrlSearchTypes);
             this.Controls.Add(this.lblFileFilters);
             this.Controls.Add(this.txtExtensionFilter);
@@ -486,7 +486,7 @@ namespace remNamer
             this.MinimumSize = new System.Drawing.Size(1200, 862);
             this.Name = "FrmMain";
             this.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.Text = "RemNamer";
+            this.Text = "RemNamer v1.0.2.0";
             ((System.ComponentModel.ISupportInitialize)(this.dgvFileInfo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPatterns)).EndInit();
             this.tabCtrlSearchTypes.ResumeLayout(false);

@@ -44,7 +44,7 @@ namespace remNamer
             ExtendedInfo = new FileInfo(this.Location);
             Created = ExtendedInfo.CreationTime.ToShortDateString();
             Modified = ExtendedInfo.LastWriteTime.ToShortDateString();
-            FileSize = GetFormatedFileSize();
+            FileSize = GetFormattedFileSize();
         }
 
         public void RenameFile()
@@ -52,7 +52,11 @@ namespace remNamer
             try
             {
                 this.LocationAfterChanges = this.LocationAfterChanges.Replace(this.Name, this.NameAfterChanges);
-                File.Move(this.Location, this.LocationAfterChanges);
+
+                if (this.Location != this.LocationAfterChanges)
+                {
+                    File.Move(this.Location, this.LocationAfterChanges);
+                }                
             }
             catch (Exception ex)
             {
@@ -71,7 +75,7 @@ namespace remNamer
             _nameAfterChanges = nameToSet;
         }
 
-        private string GetFormatedFileSize()
+        private string GetFormattedFileSize()
         {
             long length = ExtendedInfo.Length;
 

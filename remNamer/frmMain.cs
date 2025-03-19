@@ -13,30 +13,50 @@ namespace remNamer
 {
     public partial class FrmMain : MaterialForm
     {
+        private readonly Color HIGHLIGHTCOLOR = Color.Violet;
+
         private OpenFileDialog OpenFileDialog = new OpenFileDialog();
         private List<FileToRename> FileList = new List<FileToRename>();
         private MaterialSkinManager MaterialSkinManager;
         private PatternFinder PatternFinder = new PatternFinder();
-        BindingSource BindingSource = new BindingSource();
+        private BindingSource BindingSourceDfvFiles = new BindingSource();
 
         public FrmMain()
         {
             InitializeComponent();
 
-            //Material skin setup
+            SetupMaterialSkin();
+            SetupOpenFileDialog();
+            SetupDataGridViews();
+        }
+
+        /// <summary>
+        /// Material skin setup
+        /// </summary>
+        private void SetupMaterialSkin()
+        {
             MaterialSkinManager = MaterialSkinManager.Instance;
             MaterialSkinManager.AddFormToManage(this);
             MaterialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
             MaterialSkinManager.ColorScheme = new ColorScheme(Primary.DeepOrange300, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
+        }
 
-
-            //Windows not allow select folder without this
+        /// <summary>
+        /// Setup OpenFileDialog to open folders
+        /// </summary>
+        private void SetupOpenFileDialog()
+        {
             OpenFileDialog.ValidateNames = false;
             OpenFileDialog.CheckFileExists = false;
             OpenFileDialog.CheckPathExists = true;
             OpenFileDialog.FileName = "Folder Selection";
+        }
 
-            //Resize columns in DataGridViews
+        /// <summary>
+        /// Resize columns in DataGridViews
+        /// </summary>
+        private void SetupDataGridViews()
+        {
             dgvFileInfo.AllowUserToResizeColumns = true;
             dgvFileInfo.AllowUserToResizeRows = true;
             dgvFileInfo.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -50,23 +70,7 @@ namespace remNamer
 
         private void BtnOpenFolder_Click(object sender, EventArgs e)
         {
-            //User can set the directory directly
-            if (!String.IsNullOrEmpty(txtOriginDirectory.Text))
-            {
-                OpenFileDialog.InitialDirectory = txtOriginDirectory.Text;
-            }
-
-            if (OpenFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                if (OpenFileDialog.FileName.StartsWith(Environment.GetEnvironmentVariable("windir")))
-                {
-                    MessageBox.Show("System files is not allowed.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-
-                txtOriginDirectory.Text = OpenFileDialog.FileName.Replace("Folder Selection", "");
-                OpenFileDialog.FileName = "Folder Selection";
-                ApplyExtensionFilter();
-            }
+            OpenFolder();
         }
 
         private void SwitchViewMode_CheckedChanged(object sender, EventArgs e)
@@ -77,23 +81,7 @@ namespace remNamer
 
         private void DgvPatterns_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex != -1 && dgvPatterns.CurrentCell != null && dgvPatterns.CurrentCell.Value != null)
-            {
-                string preSpace = "";
-                if (txtToSearch.Text != "")
-                {
-                    preSpace = " ";
-                }
-
-                if (tabCtrlSearchTypes.SelectedIndex == 0)
-                {
-                    txtToSearch.AppendText(preSpace + dgvPatterns.CurrentRow.Cells[0].Value.ToString());
-                }
-                else
-                {
-                    txtIncremental.AppendText(preSpace + dgvPatterns.CurrentRow.Cells[0].Value.ToString());
-                }
-            }
+            DgvPatterns_CellClickCopy(sender, e);
         }
 
         private void BtnPreview_Click(object sender, EventArgs e)
@@ -150,10 +138,19 @@ namespace remNamer
         #endregion
 
         #region Controls - Methods
+
         private void LoadDataBindingDfvFiles(bool searchPatterns)
         {
-            BindingSource.DataSource = FileList;
-            dgvFileInfo.DataSource = BindingSource;
+            // Assign list to BindingSource.
+            BindingSourceDfvFiles.DataSource = FileList;
+            dgvFileInfo.DataSource = BindingSourceDfvFiles;
+
+
+            // Adjust columns width
+            SetColumnWidthsInDfvFiles();
+
+            // Highlight rows with changes
+            ApplyHighLightToRowWithChanges();
 
             if (searchPatterns)
             {
@@ -161,8 +158,34 @@ namespace remNamer
                 LoadDataBindingDgvPatterns(patternsDictionary);
             }
 
-            //Need to refresh material theme...
+            //Need to refresh material theme
             ChangeTheme(switchViewMode.Checked);
+        }
+
+        private void ApplyHighLightToRowWithChanges()
+        {
+            foreach (DataGridViewRow row in dgvFileInfo.Rows)
+            {
+                var fileToRename = row.DataBoundItem as FileToRename;
+                if (fileToRename.Name != fileToRename.NameAfterChanges)
+                {
+                    row.DefaultCellStyle.BackColor = HIGHLIGHTCOLOR;
+                }
+                else
+                {
+                    row.DefaultCellStyle.BackColor = Color.White;
+                }
+            }
+        }
+
+        private void SetColumnWidthsInDfvFiles()
+        {
+            int totalWidth = dgvFileInfo.Width;
+            dgvFileInfo.Columns[0].Width = (int)(totalWidth * 0.35);
+            dgvFileInfo.Columns[1].Width = (int)(totalWidth * 0.35);
+            dgvFileInfo.Columns[2].Width = (int)(totalWidth * 0.10);
+            dgvFileInfo.Columns[3].Width = (int)(totalWidth * 0.10);
+            dgvFileInfo.Columns[4].Width = (int)(totalWidth * 0.10);
         }
 
         private void LoadFilesToDataGrid(string[] extensionFilters)
@@ -170,7 +193,7 @@ namespace remNamer
             if (txtOriginDirectory.Text != string.Empty && !Path.HasExtension(txtOriginDirectory.Text))
             {
                 //Clean list from previous executions
-                FileList = new List<FileToRename>();
+                //FileList = new List<FileToRename>();
 
                 try
                 {
@@ -202,7 +225,7 @@ namespace remNamer
             {
                 if (patterns.Values.Count > 0)
                 {
-                    BindingSource bindingSourcePattern = new BindingSource();
+                    var bindingSourcePattern = new BindingSource();
                     patterns = patterns.OrderBy(o => o.Key).ToDictionary(x => x.Key, x => x.Value);
                     bindingSourcePattern.DataSource = patterns;
                     dgvPatterns.DataSource = bindingSourcePattern;
@@ -248,10 +271,10 @@ namespace remNamer
                 {
                     item.RenameFile();
                 }
-
-                //Reload files from disk
-                ApplyExtensionFilter();
             }
+
+            //Reload files from disk
+            ApplyExtensionFilter();
 
             //Unblock form
             this.Enabled = true;
@@ -263,17 +286,9 @@ namespace remNamer
         /// <param name="isDarkTheme"></param>
         private void ChangeTheme(bool isDarkTheme)
         {
-
-            Color gridForeColor = Color.Black;
-            Color backColor = Color.White;
-            MaterialSkinManager.Themes themeToSet = MaterialSkinManager.Themes.LIGHT;
-
-            if (isDarkTheme)
-            {
-                gridForeColor = Color.White;
-                backColor = Color.DarkGray;
-                themeToSet = MaterialSkinManager.Themes.DARK;
-            }
+            var gridForeColor = isDarkTheme ? Color.White : Color.Black;
+            var backColor = isDarkTheme ? Color.DarkGray : Color.White;
+            var themeToSet = isDarkTheme ? MaterialSkinManager.Themes.DARK : MaterialSkinManager.Themes.LIGHT;
 
             //dgv not works well with dark mode so we need to change it manually
             dgvFileInfo.ForeColor = gridForeColor;
@@ -282,8 +297,12 @@ namespace remNamer
 
             foreach (DataGridViewRow row in dgvFileInfo.Rows)
             {
-                row.DefaultCellStyle.BackColor = backColor;
+                if (row.DefaultCellStyle.BackColor != HIGHLIGHTCOLOR)
+                {
+                    row.DefaultCellStyle.BackColor = backColor;
+                }
             }
+
             foreach (DataGridViewRow row in dgvPatterns.Rows)
             {
                 row.DefaultCellStyle.BackColor = backColor;
@@ -332,7 +351,7 @@ namespace remNamer
             {
                 foreach (var item in FileList)
                 {
-                    ////We need to use name without extension because maybe you want to replace a dot
+                    //We need to use name without extension because maybe you want to replace a dot
                     string newName = item.NameWithoutExtension.Replace(textToSearch, txtReplace.Text);
 
                     //Update properties
@@ -368,7 +387,7 @@ namespace remNamer
                 item.SetNameAfterChanges(newItemName);
             }
 
-            //Remove %Any% from next searchs
+            //Remove %Any% from next searches
             var txtReplaceWithoutRegExp = textInSelectedTextBox.Replace(PatternFinder.TextForAnyInBrackets, "");
             txtReplaceWithoutRegExp = txtReplaceWithoutRegExp.Replace(PatternFinder.TextForAnyInParenthesis, "");
 
@@ -387,6 +406,48 @@ namespace remNamer
             else
             {
                 btnRename.Enabled = false;
+            }
+        }
+
+        private void OpenFolder()
+        {
+            //User can set the directory directly
+            if (!String.IsNullOrEmpty(txtOriginDirectory.Text))
+            {
+                OpenFileDialog.InitialDirectory = txtOriginDirectory.Text;
+            }
+
+            if (OpenFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                if (OpenFileDialog.FileName.StartsWith(Environment.GetEnvironmentVariable("windir")))
+                {
+                    MessageBox.Show("System files is not allowed.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
+                txtOriginDirectory.Text = OpenFileDialog.FileName.Replace("Folder Selection", "");
+                OpenFileDialog.FileName = "Folder Selection";
+                ApplyExtensionFilter();
+            }
+        }
+
+        private void DgvPatterns_CellClickCopy(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex != -1 && dgvPatterns.CurrentCell != null && dgvPatterns.CurrentCell.Value != null)
+            {
+                string preSpace = "";
+                if (txtToSearch.Text != "")
+                {
+                    preSpace = " ";
+                }
+
+                if (tabCtrlSearchTypes.SelectedIndex == 0)
+                {
+                    txtToSearch.AppendText(preSpace + dgvPatterns.CurrentRow.Cells[0].Value.ToString());
+                }
+                else
+                {
+                    txtIncremental.AppendText(preSpace + dgvPatterns.CurrentRow.Cells[0].Value.ToString());
+                }
             }
         }
     }
