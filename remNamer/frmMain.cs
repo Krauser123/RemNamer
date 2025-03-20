@@ -99,14 +99,6 @@ namespace remNamer
             RenameFiles(true);
         }
 
-        private void BtnApplyFileFilter_Click(object sender, EventArgs e)
-        {
-            if (!String.IsNullOrEmpty(txtExtensionFilter.Text) && !String.IsNullOrWhiteSpace(txtExtensionFilter.Text))
-            {
-                ApplyExtensionFilter();
-            }
-        }
-
         private void TxtToSearch_TextChanged(object sender, EventArgs e)
         {
             if (txtToSearch.Text != string.Empty)
@@ -181,23 +173,26 @@ namespace remNamer
         private void SetColumnWidthsInDfvFiles()
         {
             int totalWidth = dgvFileInfo.Width;
-            dgvFileInfo.Columns[0].Width = (int)(totalWidth * 0.35);
-            dgvFileInfo.Columns[1].Width = (int)(totalWidth * 0.35);
+            dgvFileInfo.Columns[0].Width = (int)(totalWidth * 0.36);
+            dgvFileInfo.Columns[1].Width = (int)(totalWidth * 0.36);
             dgvFileInfo.Columns[2].Width = (int)(totalWidth * 0.10);
             dgvFileInfo.Columns[3].Width = (int)(totalWidth * 0.10);
-            dgvFileInfo.Columns[4].Width = (int)(totalWidth * 0.10);
+            dgvFileInfo.Columns[4].Width = (int)(totalWidth * 0.08);
         }
 
-        private void LoadFilesToDataGrid(string[] extensionFilters)
+        private void LoadFilesToDataGrid(bool cleanPrevious)
         {
             if (txtOriginDirectory.Text != string.Empty && !Path.HasExtension(txtOriginDirectory.Text))
             {
-                //Clean list from previous executions
-                //FileList = new List<FileToRename>();
+                //Clean list from previous executions, normally in preview mode
+                if (cleanPrevious)
+                {
+                    FileList = new List<FileToRename>();
+                }
 
                 try
                 {
-                    var files = Helper.GetFiles(txtOriginDirectory.Text, chkSearchFilesRecursively.Checked, extensionFilters);
+                    var files = Helper.GetFiles(txtOriginDirectory.Text, chkSearchFilesRecursively.Checked);
 
                     foreach (var item in files)
                     {
@@ -245,8 +240,8 @@ namespace remNamer
         /// <summary>
         /// Rename files in disk, this operation cannot be undone
         /// </summary>
-        /// <param name="saveInDisk">set to false to preview changes</param>
-        private void RenameFiles(bool saveInDisk)
+        /// <param name="isPreview">set to false to preview changes</param>
+        private void RenameFiles(bool isPreview)
         {
             //Check if we need search with RegExp
             string textToSearch = PreviewSearchAndReplaceWithRegExp();
@@ -264,7 +259,7 @@ namespace remNamer
             //Block form
             this.Enabled = false;
 
-            if (saveInDisk)
+            if (!isPreview)
             {
                 //Change files using properties
                 foreach (var item in this.FileList)
@@ -274,7 +269,7 @@ namespace remNamer
             }
 
             //Reload files from disk
-            ApplyExtensionFilter();
+            LoadFilesToDataGrid(isPreview);
 
             //Unblock form
             this.Enabled = true;
@@ -307,28 +302,6 @@ namespace remNamer
             {
                 row.DefaultCellStyle.BackColor = backColor;
             }
-        }
-
-        /// <summary>
-        /// Apply extension filter set by user on dataGridView
-        /// </summary>
-        private void ApplyExtensionFilter()
-        {
-            //Get filters
-            string availableExt = txtExtensionFilter.Text.Trim();
-            string[] availableExtensions = null;
-
-            //First validate filter
-            if (!string.IsNullOrEmpty(txtExtensionFilter.Text)
-                && !string.IsNullOrWhiteSpace(txtExtensionFilter.Text)
-                && availableExt.IndexOf(";") != -1)
-            {
-                //Multifilter                
-                availableExtensions = availableExt.Split(';');
-            }
-
-            //Refresh dataGridView
-            LoadFilesToDataGrid(availableExtensions);
         }
 
         private void PreviewIncremental(string textToSearch)
@@ -426,7 +399,7 @@ namespace remNamer
 
                 txtOriginDirectory.Text = OpenFileDialog.FileName.Replace("Folder Selection", "");
                 OpenFileDialog.FileName = "Folder Selection";
-                ApplyExtensionFilter();
+                LoadFilesToDataGrid(false);
             }
         }
 
@@ -434,8 +407,8 @@ namespace remNamer
         {
             if (e.RowIndex != -1 && dgvPatterns.CurrentCell != null && dgvPatterns.CurrentCell.Value != null)
             {
-                string preSpace = "";
-                if (txtToSearch.Text != "")
+                string preSpace = string.Empty;
+                if (txtToSearch.Text != string.Empty)
                 {
                     preSpace = " ";
                 }
@@ -449,6 +422,11 @@ namespace remNamer
                     txtIncremental.AppendText(preSpace + dgvPatterns.CurrentRow.Cells[0].Value.ToString());
                 }
             }
+        }
+
+        private void chkSearchPatterns_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

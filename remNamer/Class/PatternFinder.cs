@@ -8,7 +8,7 @@ namespace remNamer.Class
     internal class PatternFinder
     {
         const int LENGTH_CRITERIA = 3;
-        const int MIN_CRITERIA = 3;
+        const double thresholdPercentage = 0.1;
         public const string TextForAnyInParenthesis = "(% Any %)";
         public const string TextForAnyInBrackets = "[% Any %]";
 
@@ -16,7 +16,7 @@ namespace remNamer.Class
         {
             if (files == null)
             {
-                throw new ArgumentException("FilesToRename is null, be sure to call this class constructor with a valid collection.");
+                throw new ArgumentException("files is null, be sure to call this class constructor with a valid collection.");
             }
 
             List<FileToRename> exampleItems = GetRandomItemsAsExample(files);
@@ -31,55 +31,52 @@ namespace remNamer.Class
 
         private Dictionary<string, int> CountPatterns(string text)
         {
-            var dict = new Dictionary<string, int>();
+            var patternsFound = new Dictionary<string, int>();
             var regexItem = new Regex("[^a-zA-Z0-9_.]+");
 
             //Just cleaning up a bit
             text = text.Replace(",", "");
 
             //Create an array of words
-            string[] splitedText = text.Split(new string[] { " ", "-", "[", "(", ")", "]" }, StringSplitOptions.RemoveEmptyEntries);
+            string[] separators = text.Split(new string[] { " ", ".", "-", "[", "(", ")", "]" }, StringSplitOptions.RemoveEmptyEntries);
 
             // Sort the array by alphabetical order
-            Array.Sort(splitedText);
+            Array.Sort(separators);
 
-            foreach (string word in splitedText)
+            foreach (string word in separators)
             {
                 if (word.Length >= LENGTH_CRITERIA || regexItem.IsMatch(word))
                 {
-                    if (dict.ContainsKey(word))
+                    if (patternsFound.ContainsKey(word))
                     {
-                        dict[word]++;
+                        patternsFound[word]++;
                     }
                     else
                     {
-                        dict[word] = 1;
+                        patternsFound[word] = 1;
                     }
                 }
             }
 
-            //if (dict.Values.Count > 0)
-            //{
-            //    //Remove less common matches
-            //    var maxValue = dict.Values.Max() / MIN_CRITERIA;
-            //    var itemsToRemove = dict.Where(o => o.Value <= maxValue).ToList();
-            //    foreach (var item in itemsToRemove)
-            //    {
-            //        dict.Remove(item.Key);
-            //    }
 
-            //    // Limit the dictionary to the top 10 elements
-            //    dict = dict.OrderByDescending(o => o.Value).Take(10).ToDictionary(o => o.Key, o => o.Value);
-            //}
+            // Find the maximum value in the dictionary
+            int maxValue = patternsFound.Values.Max();
 
-            // Limit the dictionary to the top 10 elements
-            dict = dict.OrderByDescending(o => o.Value).Take(10).ToDictionary(o => o.Key, o => o.Value);
+            // Calculate the threshold as a percentage of the maximum value           
+            int threshold = (int)(maxValue * thresholdPercentage);
+
+            // Limit the dictionary to the top elements with value > threshold
+            patternsFound = patternsFound.Where(o => o.Value > threshold)
+                                           .OrderByDescending(o => o.Value)
+                                           .Take(15)
+                                   .ToDictionary(o => o.Key, o => o.Value, StringComparer.OrdinalIgnoreCase);
+
 
             //Add standard for brackets and parenthesis
-            dict.Add(TextForAnyInBrackets, 0);
-            dict.Add(TextForAnyInParenthesis, 0);
+            patternsFound.Add(TextForAnyInBrackets, 0);
+            patternsFound.Add(TextForAnyInParenthesis, 0);
 
-            return dict;
+            return patternsFound;
         }
 
         private List<FileToRename> GetRandomItemsAsExample(List<FileToRename> files)

@@ -40,9 +40,6 @@ namespace remNamer
             this.lblPattern = new MaterialSkin.Controls.MaterialLabel();
             this.btnRename = new MaterialSkin.Controls.MaterialButton();
             this.switchViewMode = new MaterialSkin.Controls.MaterialSwitch();
-            this.txtExtensionFilter = new MaterialSkin.Controls.MaterialTextBox();
-            this.btnApplyFileFilter = new MaterialSkin.Controls.MaterialButton();
-            this.lblFileFilters = new MaterialSkin.Controls.MaterialLabel();
             this.tabCtrlSearchTypes = new System.Windows.Forms.TabControl();
             this.tabPgReplace = new System.Windows.Forms.TabPage();
             this.btnPreview = new MaterialSkin.Controls.MaterialButton();
@@ -69,26 +66,26 @@ namespace remNamer
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvFileInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvFileInfo.Location = new System.Drawing.Point(5, 638);
+            this.dgvFileInfo.Location = new System.Drawing.Point(10, 520);
             this.dgvFileInfo.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dgvFileInfo.Name = "dgvFileInfo";
             this.dgvFileInfo.ReadOnly = true;
             this.dgvFileInfo.RowHeadersWidth = 51;
             this.dgvFileInfo.RowTemplate.Height = 24;
             this.dgvFileInfo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvFileInfo.Size = new System.Drawing.Size(1427, 340);
+            this.dgvFileInfo.Size = new System.Drawing.Size(1421, 440);
             this.dgvFileInfo.TabIndex = 2;
             // 
             // dgvPatterns
             // 
             this.dgvPatterns.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvPatterns.Location = new System.Drawing.Point(5, 338);
+            this.dgvPatterns.Location = new System.Drawing.Point(9, 230);
             this.dgvPatterns.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.dgvPatterns.Name = "dgvPatterns";
             this.dgvPatterns.RowHeadersWidth = 51;
             this.dgvPatterns.RowTemplate.Height = 24;
             this.dgvPatterns.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvPatterns.Size = new System.Drawing.Size(523, 290);
+            this.dgvPatterns.Size = new System.Drawing.Size(523, 284);
             this.dgvPatterns.TabIndex = 5;
             this.dgvPatterns.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DgvPatterns_CellClick);
             // 
@@ -105,7 +102,7 @@ namespace remNamer
             this.btnOpenFolder.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.btnOpenFolder.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnOpenFolder.Name = "btnOpenFolder";
-            this.btnOpenFolder.Size = new System.Drawing.Size(153, 62);
+            this.btnOpenFolder.Size = new System.Drawing.Size(211, 50);
             this.btnOpenFolder.TabIndex = 9;
             this.btnOpenFolder.Text = "Open folder";
             this.btnOpenFolder.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
@@ -130,6 +127,7 @@ namespace remNamer
             this.chkSearchPatterns.TabIndex = 10;
             this.chkSearchPatterns.Text = "Search Patterns";
             this.chkSearchPatterns.UseVisualStyleBackColor = true;
+            this.chkSearchPatterns.CheckedChanged += new System.EventHandler(this.chkSearchPatterns_CheckedChanged);
             // 
             // chkSearchFilesRecursively
             // 
@@ -181,7 +179,7 @@ namespace remNamer
             this.lblPattern.AutoSize = true;
             this.lblPattern.Depth = 0;
             this.lblPattern.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.lblPattern.Location = new System.Drawing.Point(3, 313);
+            this.lblPattern.Location = new System.Drawing.Point(7, 205);
             this.lblPattern.MouseState = MaterialSkin.MouseState.HOVER;
             this.lblPattern.Name = "lblPattern";
             this.lblPattern.Size = new System.Drawing.Size(106, 19);
@@ -198,11 +196,11 @@ namespace remNamer
             this.btnRename.Enabled = false;
             this.btnRename.HighEmphasis = true;
             this.btnRename.Icon = null;
-            this.btnRename.Location = new System.Drawing.Point(1051, 575);
+            this.btnRename.Location = new System.Drawing.Point(1055, 455);
             this.btnRename.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.btnRename.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnRename.Name = "btnRename";
-            this.btnRename.Size = new System.Drawing.Size(376, 53);
+            this.btnRename.Size = new System.Drawing.Size(376, 56);
             this.btnRename.TabIndex = 15;
             this.btnRename.Text = "Rename";
             this.btnRename.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
@@ -227,73 +225,21 @@ namespace remNamer
             this.switchViewMode.UseVisualStyleBackColor = true;
             this.switchViewMode.CheckedChanged += new System.EventHandler(this.SwitchViewMode_CheckedChanged);
             // 
-            // txtExtensionFilter
-            // 
-            this.txtExtensionFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtExtensionFilter.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtExtensionFilter.Depth = 0;
-            this.txtExtensionFilter.Font = new System.Drawing.Font("Roboto", 12F);
-            this.txtExtensionFilter.Hint = "*.pdf,*.png";
-            this.txtExtensionFilter.Location = new System.Drawing.Point(9, 225);
-            this.txtExtensionFilter.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.txtExtensionFilter.MaxLength = 50;
-            this.txtExtensionFilter.MouseState = MaterialSkin.MouseState.OUT;
-            this.txtExtensionFilter.Multiline = false;
-            this.txtExtensionFilter.Name = "txtExtensionFilter";
-            this.txtExtensionFilter.Size = new System.Drawing.Size(551, 50);
-            this.txtExtensionFilter.TabIndex = 23;
-            this.txtExtensionFilter.Text = "";
-            // 
-            // btnApplyFileFilter
-            // 
-            this.btnApplyFileFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApplyFileFilter.AutoSize = false;
-            this.btnApplyFileFilter.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnApplyFileFilter.Depth = 0;
-            this.btnApplyFileFilter.DrawShadows = true;
-            this.btnApplyFileFilter.HighEmphasis = true;
-            this.btnApplyFileFilter.Icon = null;
-            this.btnApplyFileFilter.Location = new System.Drawing.Point(567, 225);
-            this.btnApplyFileFilter.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnApplyFileFilter.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnApplyFileFilter.Name = "btnApplyFileFilter";
-            this.btnApplyFileFilter.Size = new System.Drawing.Size(129, 62);
-            this.btnApplyFileFilter.TabIndex = 22;
-            this.btnApplyFileFilter.Text = "Apply";
-            this.btnApplyFileFilter.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
-            this.btnApplyFileFilter.UseAccentColor = false;
-            this.btnApplyFileFilter.UseVisualStyleBackColor = true;
-            this.btnApplyFileFilter.Click += new System.EventHandler(this.BtnApplyFileFilter_Click);
-            // 
-            // lblFileFilters
-            // 
-            this.lblFileFilters.AutoSize = true;
-            this.lblFileFilters.Depth = 0;
-            this.lblFileFilters.Font = new System.Drawing.Font("Roboto", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.lblFileFilters.Location = new System.Drawing.Point(5, 198);
-            this.lblFileFilters.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblFileFilters.Name = "lblFileFilters";
-            this.lblFileFilters.Size = new System.Drawing.Size(109, 19);
-            this.lblFileFilters.TabIndex = 24;
-            this.lblFileFilters.Text = "Extension Filter";
-            // 
             // tabCtrlSearchTypes
             // 
             this.tabCtrlSearchTypes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabCtrlSearchTypes.Controls.Add(this.tabPgReplace);
             this.tabCtrlSearchTypes.Controls.Add(this.tabPgIncremental);
-            this.tabCtrlSearchTypes.Location = new System.Drawing.Point(536, 338);
+            this.tabCtrlSearchTypes.Location = new System.Drawing.Point(540, 230);
             this.tabCtrlSearchTypes.Margin = new System.Windows.Forms.Padding(4);
             this.tabCtrlSearchTypes.Name = "tabCtrlSearchTypes";
             this.tabCtrlSearchTypes.SelectedIndex = 0;
-            this.tabCtrlSearchTypes.Size = new System.Drawing.Size(511, 290);
+            this.tabCtrlSearchTypes.Size = new System.Drawing.Size(511, 284);
             this.tabCtrlSearchTypes.TabIndex = 25;
             // 
             // tabPgReplace
             // 
-            this.tabPgReplace.Controls.Add(this.btnPreview);
             this.tabPgReplace.Controls.Add(this.lblReplace);
             this.tabPgReplace.Controls.Add(this.lblTextToSearch);
             this.tabPgReplace.Controls.Add(this.txtReplace);
@@ -302,7 +248,7 @@ namespace remNamer
             this.tabPgReplace.Margin = new System.Windows.Forms.Padding(4);
             this.tabPgReplace.Name = "tabPgReplace";
             this.tabPgReplace.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPgReplace.Size = new System.Drawing.Size(503, 261);
+            this.tabPgReplace.Size = new System.Drawing.Size(503, 255);
             this.tabPgReplace.TabIndex = 0;
             this.tabPgReplace.Text = "Replace";
             this.tabPgReplace.UseVisualStyleBackColor = true;
@@ -317,11 +263,11 @@ namespace remNamer
             this.btnPreview.Enabled = false;
             this.btnPreview.HighEmphasis = true;
             this.btnPreview.Icon = null;
-            this.btnPreview.Location = new System.Drawing.Point(360, 145);
+            this.btnPreview.Location = new System.Drawing.Point(1055, 380);
             this.btnPreview.Margin = new System.Windows.Forms.Padding(5, 7, 5, 7);
             this.btnPreview.MouseState = MaterialSkin.MouseState.HOVER;
             this.btnPreview.Name = "btnPreview";
-            this.btnPreview.Size = new System.Drawing.Size(131, 62);
+            this.btnPreview.Size = new System.Drawing.Size(376, 56);
             this.btnPreview.TabIndex = 26;
             this.btnPreview.Text = "Preview";
             this.btnPreview.Type = MaterialSkin.Controls.MaterialButton.MaterialButtonType.Contained;
@@ -467,10 +413,8 @@ namespace remNamer
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1439, 981);
+            this.Controls.Add(this.btnPreview);
             this.Controls.Add(this.tabCtrlSearchTypes);
-            this.Controls.Add(this.lblFileFilters);
-            this.Controls.Add(this.txtExtensionFilter);
-            this.Controls.Add(this.btnApplyFileFilter);
             this.Controls.Add(this.switchViewMode);
             this.Controls.Add(this.btnRename);
             this.Controls.Add(this.lblPattern);
@@ -510,9 +454,6 @@ namespace remNamer
         private MaterialSkin.Controls.MaterialLabel lblPattern;
         private MaterialSkin.Controls.MaterialButton btnRename;
         private MaterialSkin.Controls.MaterialSwitch switchViewMode;
-        private MaterialSkin.Controls.MaterialTextBox txtExtensionFilter;
-        private MaterialSkin.Controls.MaterialButton btnApplyFileFilter;
-        private MaterialSkin.Controls.MaterialLabel lblFileFilters;
         private System.Windows.Forms.TabControl tabCtrlSearchTypes;
         private System.Windows.Forms.TabPage tabPgReplace;
         private System.Windows.Forms.TabPage tabPgIncremental;

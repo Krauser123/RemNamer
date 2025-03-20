@@ -6,7 +6,7 @@ namespace remNamer.Class
 {
     internal class Helper
     {
-        internal static List<string> GetFiles(string initialDirPath, bool recursiveSearch, string[] extensionFilters)
+        internal static List<string> GetFiles(string initialDirPath, bool recursiveSearch, string[] extensionFilters= null)
         {
             //Get files in root directory
             List<string> files = new List<string>();

@@ -35,10 +35,10 @@ namespace remNamer
 
             //Get name
             this.Name = _nameAfterChanges = Path.GetFileName(path);            
-            this.NameWithoutExtension = Path.GetFileNameWithoutExtension(path);
-
+            this.NameWithoutExtension = GetFileNameWithoutExtension(path);
+            
             //Get extension
-            this.FileExtension = Path.GetExtension(path);
+            this.FileExtension = GetFileExtension(path);
 
             //Load extended properties
             ExtendedInfo = new FileInfo(this.Location);
@@ -66,8 +66,8 @@ namespace remNamer
 
         public void SetNameAfterChanges(string nameToSet)
         {
-            //If the name doesn't have an extension we need to append it
-            if (!Path.HasExtension(nameToSet))
+            //If the name doesn't have an extension we need to append it, also if the extension is too long
+            if (!Path.HasExtension(nameToSet) || Path.GetExtension(nameToSet).Length > 5)
             {
                 nameToSet += this.FileExtension;
             }
@@ -96,5 +96,28 @@ namespace remNamer
 
             return Math.Round(Convert.ToDouble(length), 2);
         }
+
+        private string GetFileNameWithoutExtension(string path)
+        {
+            string fileName = Path.GetFileName(path);
+            int lastDotIndex = fileName.LastIndexOf('.');
+            if (lastDotIndex == -1)
+            {
+                return fileName;
+            }
+            return fileName.Substring(0, lastDotIndex);
+        }
+
+        private string GetFileExtension(string path)
+        {
+            string fileName = Path.GetFileName(path);
+            int lastDotIndex = fileName.LastIndexOf('.');
+            if (lastDotIndex == -1)
+            {
+                return string.Empty;
+            }
+            return fileName.Substring(lastDotIndex);
+        }
+
     }
 }
